@@ -12,6 +12,7 @@ import util.DB_manager;
 public class Test {
 
 	public static void main(String[] args) {
+		
 		String DB_DRIVER = "com.mysql.jdbc.Driver";
 		String DB_CONNECTION = "jdbc:mysql://ggcis01rdspublic.mysql.rds.aliyuncs.com:3309/cis_0001";
 		String DB_USER = "hzhg";
@@ -28,7 +29,7 @@ public class Test {
 			
 			PreparedStatement pstmt = connection.prepareStatement(query);
 			ResultSet rs = pstmt.executeQuery();
-			/* read data */
+			// read data
 			while(rs.next()) {
 				String g_name = rs.getString(1);
 				String g_model = rs.getString(2);
@@ -44,7 +45,7 @@ public class Test {
 				writer.append("品牌: " + good.get_brand() + "\n");
 			}
 			System.out.println("Data record done! see " + filename);
-			 /* end data preparation */
+			// end data preparation
 			if (writer != null) {
 		    	writer.close();
 		    }
@@ -63,10 +64,6 @@ public class Test {
 			e.printStackTrace();
 		}
 		
-		
-		
-	    
-	   
 		
 /*		
 		String content1 = "品牌honda,hehehe";
