@@ -1,7 +1,5 @@
 package str_rec;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -141,11 +139,7 @@ public class Good {
 			this.brand = "无";
 		}
 	}
-	
-	public void record(OutputStreamWriter writer) throws IOException {
-		writer.append("品牌: " + this.brand);
-	}
-	
+
 	/* get/set methods */
 	public String get_original_string() {
 		return this.original_string;
