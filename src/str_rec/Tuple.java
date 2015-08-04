@@ -68,9 +68,9 @@ public class Tuple {
 		result.append(this.threshold+", ");
 		result.append(this.clusterSet.size()+", ");
 		for(Cluster c : this.clusterSet) {
-            result.append(c.toString());
-        }
-        result.append(">");
-        return result.toString();
-    }
+			result.append(c.toString());
+		}
+		result.append(">");
+		return result.toString();
+	}
 }
