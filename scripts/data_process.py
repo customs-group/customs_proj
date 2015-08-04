@@ -55,8 +55,6 @@ re_list.append(re.compile('＋|\+'.decode('utf-8')));
 aim_list.append('+');
 re_list.append(re.compile(';|、|；|\/|、| |，|｀|～|！|＠|＄|＾|＝|＼|｜|＇|／|？'.decode('utf-8')));
 aim_list.append(',');
-re_list.append(re.compile('[;,]+'.decode('utf-8')));
-aim_list.append(',');
 
 re_list.append(re.compile('（|（|［|｛|\(|\[|\{|【|\{'.decode('utf-8')));
 re_list.append(re.compile('）|）|］|｝|\)|\]|\}|】|\}'.decode('utf-8')));
@@ -81,8 +79,9 @@ re_list.append(re.compile(u'[^\s]无品牌无型号'));
 aim_list.append(u',无品牌,无型号,');
 re_list.append(re.compile(u'[^\s]型号'));
 aim_list.append(u',型号:');
-re_list.append(re.compile(u'[^\s]品牌'));
-aim_list.append(u',品牌:');
+
+re_list.append(re.compile('[;,]+'.decode('utf-8')));
+aim_list.append(',');
 
 
 #re_list.append(re.compile(',\+'));
@@ -253,7 +252,7 @@ def extract_remove_brand(s):
 	return [brand,s]
 
 
-model_re = re.compile('^[0-9A-Za-z,\- \*\.\+%:]+$'.decode('utf-8'));
+model_re = re.compile('^[0-9A-Za-z,\- \*\.\+%:\(\)\"=#\<\>]+$'.decode('utf-8'));
 
 def compute(s):
 	brand = '';
@@ -309,7 +308,7 @@ def extractor(in_file,out_file,encoding = 'utf-8'):
 			out.write('型号:无'+'\t');
 
 		y = cleaner(x[2]);
-		out.write(tmp.encode(encoding)+'\t');
+#		out.write(tmp.encode(encoding)+'\t');
 		out.write('其他描述:' + y.encode(encoding)+'\n');
 			
 		
