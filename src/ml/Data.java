@@ -33,7 +33,7 @@ public class Data {
 		this.scale_lower_bound = -1;
 	}
 	
-	/* transfer String to Double, in case some features are "null", "I", "E" or "" */
+	/** transfer String to Double, in case some features are "null", "I", "E" or "" */
 	private static Double stod(String string) {
 		Double result = 2.0; // should handle this error: "cannnot convert string to Double"
 		if (string == null || string.equals("") || string.equals("null") || string.equals("I")) {
@@ -50,7 +50,7 @@ public class Data {
 		return result;
 	}
 	
-	/* make the labels 1 or -1 */
+	/** make the labels 1 or -1 */
 	private static Double mklabel(Double label) {
 		Double _label;
 		if (label == 0) {
@@ -61,7 +61,7 @@ public class Data {
 		return _label;
 	}
 	
-	/* read data from database */
+	/** read data from database */
 	public void read_data(Connection connection, String query) throws SQLException {
 		PreparedStatement pstmt = connection.prepareStatement(query);
 		ResultSet rs = pstmt.executeQuery();
@@ -103,7 +103,8 @@ public class Data {
 		}
 	}
 
-	/* record data to file
+	/**
+	 * record data to file
 	 * @param filename: filename to store data
 	 * @param data_type: "original" or "scaled", either lower or upper case accepted
 	 */
@@ -143,7 +144,8 @@ public class Data {
 		}
 	}
 	
-	/* scale training data
+	/**
+	 * scale training data
 	 * @return: scaling parameter in double[][]
 	 * @double[0][0]: scale_upper_bound
 	 * @double[0][1]: scale_lower_bound
@@ -209,7 +211,8 @@ public class Data {
 		return scale_param;
 	}
 	
-	/* scale testing data
+	/**
+	 * scale testing data
 	 * @param: scale_param
 	 * see: scale_data@param
 	 */
@@ -254,7 +257,7 @@ public class Data {
 		}
 	}
 	
-	/* get/set mothods */
+	/** get/set mothods */
 	public Vector<svm_node[]> get_set(String data_type) {
 		if (data_type.toLowerCase() == ORIGINAL) {
 			return this.original_set;

@@ -9,7 +9,7 @@ import libsvm.*;
 
 public class Test {
 
-	/* get DB connection */
+	/** get DB connection */
 	private static Connection getDBConnection(String DB_DRIVER, String DB_CONNECTION, String DB_USER, String DB_PASSWORD) {
 		Connection connection = null;
 		try {

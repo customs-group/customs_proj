@@ -22,7 +22,8 @@ public class Grid_search {
 	private static int G_START_VALUE = -8;
 	private static int G_STOP_VALUE = 8;
 	
-	/* train svm model
+	/**
+	 * train svm model
 	 * @param set: train set
 	 * @param labels: train labels
 	 * @param param: svm_parameter
@@ -53,7 +54,8 @@ public class Grid_search {
         return model;
 	}
 
-	/* valid model accuracy
+	/**
+	 * valid model accuracy
 	 * @param model: model to valid
 	 * @param set: test set
 	 * @param labels: test labels

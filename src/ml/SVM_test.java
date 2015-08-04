@@ -11,7 +11,8 @@ import libsvm.*;
 
 public class SVM_test {
 	
-	/* train svm model
+	/**
+	 * train svm model
 	 * @param data: data used to train the model
 	 * @return model
 	 */
@@ -52,7 +53,8 @@ public class SVM_test {
         return model;
 	}
 	
-	/* predicte the labels of test data
+	/**
+	 * predicte the labels of test data
 	 * @param model: model trained by svm_train
 	 * @param data: data used to test the model
 	 */

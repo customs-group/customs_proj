@@ -234,7 +234,7 @@ public class Good {
 		}
 	}
 
-	/* get/set methods */
+	/** get/set methods */
 	public String get_original_string() {
 		return this.original_string;
 	}
