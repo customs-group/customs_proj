@@ -2,18 +2,31 @@
 
 f="$1.i";
 g=$1
-g1="${g}1"
-g2="${g}2"
-g3="${g}3"
+tmp="${g}_tmp"
+ready="${g}_ready"
+out="${g}_out"
+
+gname="${g}_name"
+gmodel="${g}_model"
 
 python haiguan_norm.py $g $f
 
+#1. sub 1""->1##
+#2. sub """->"
+#3. sub ""->null
+#4. contat gname@@gmodel
+#4. sub back 1##->1""
+#5. sub xxx型号xxx->xxx,型号xxx
+sed 's/\([0-9]\)\"\"/\1##/g' $f | awk '{gsub(/[\"]{3}/,"\"");print $0}' | awk '{gsub(/\"{2}/,"");print $0}' > tmp
 
-awk -F "\t" '{print $4}' $f > $g
-python haiguan_brand.py $g $g1 "name"; 
+awk -F'[\t\"]+' '{print $3"@@"$4}' tmp | awk '{gsub(/##/,"\"\"");print $0}' | sed 's/\([^\s,;:\|\(@]\)\(型号\)/\1,\2/' > ready
 
-awk -F'[\t\"]+' '{print $5}' $f > $g;
-python haiguan_brand.py $g $g2 "model";
+python data_process.py ready out
+
+#python haiguan_brand.py $g $g1 "name"; 
+
+#python haiguan_brand.py $g $g2 "model";
+
 
 paste $g1 $g2 > $g3
 
