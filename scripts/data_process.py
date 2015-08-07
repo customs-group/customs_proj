@@ -131,6 +131,7 @@ pai_pre_dict3 = {
 		'标记牌'.decode('utf-8'):0,
 		'标识牌'.decode('utf-8'):0,
 		'标志牌'.decode('utf-8'):0,
+		'标示牌'.decode('utf-8'):0,
 		'广告牌'.decode('utf-8'):0,
 		'行李牌'.decode('utf-8'):0,
 		'警示牌'.decode('utf-8'):0,
@@ -298,8 +299,8 @@ brand_re4 = re.compile('牌:[^:;,\s\\/\)@\|]+'.decode('utf-8'));
 brand_re5 = re.compile('品牌[^\s:;,\+\.\"\\/@\|]+'.decode('utf-8'));
 brand_re6 = re.compile('牌子[^\s:;,\+\.\"\\/@\|]+'.decode('utf-8'));
 
-brand_re7 = re.compile('[,;%:\s\(@][^,;:\s\\/%]+?牌'.decode('utf-8'));
-brand_re8 = re.compile('[,;%:\s\(@][^,;:\s\\/%]+?牌子'.decode('utf-8'));
+brand_re7 = re.compile('[,;@%:\s\(\)][^,;:@\s\(\)\\/%]+?牌'.decode('utf-8'));
+brand_re8 = re.compile('[,;@%:\s\(\)][^,;:@\s\(\)\\/%]+?牌子'.decode('utf-8'));
 brand_re9 = re.compile('^[^:;,\s\\/\"%\(]+?牌'.decode('utf-8'));
 
 
@@ -431,6 +432,7 @@ def cleaner(s):
 	s = re.sub('[,]+$','',s)
 	s = re.sub('[,]{2,}',',',s)
 	s = s.rstrip('|');
+	s = re.sub('^@','',s)
 	return s;
 
 #param1: input
