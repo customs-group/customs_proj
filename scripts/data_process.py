@@ -39,7 +39,7 @@ re_list.append(re.compile(' +'.decode('utf-8')));
 aim_list.append(',');
 re_list.append(re.compile('％'.decode('utf-8')));
 aim_list.append('%');
-re_list.append(re.compile('：'.decode('utf-8')));
+re_list.append(re.compile('：|: '.decode('utf-8')));
 aim_list.append(':');
 re_list.append(re.compile('．|\.|\·|。'.decode('utf-8')));
 aim_list.append('.');
@@ -53,9 +53,6 @@ re_list.append(re.compile('＆|\&'.decode('utf-8')));
 aim_list.append('&');
 re_list.append(re.compile('＋|\+'.decode('utf-8')));
 aim_list.append('+');
-re_list.append(re.compile(';|、|；|\/|、| |，|｀|～|！|＠|＄|＾|＝|＼|｜|＇|／|？'.decode('utf-8')));
-aim_list.append(',');
-
 re_list.append(re.compile('（|（|［|｛|\(|\[|\{|【|\{'.decode('utf-8')));
 re_list.append(re.compile('）|）|］|｝|\)|\]|\}|】|\}'.decode('utf-8')));
 aim_list.append('(');
@@ -64,6 +61,9 @@ re_list.append(re.compile('＜|\<|≤|《'.decode('utf-8')));
 re_list.append(re.compile('＞|\>|≥|》'.decode('utf-8')));
 aim_list.append('<');
 aim_list.append('>');
+
+re_list.append(re.compile('、|；|;|\/|、|，| |｀|～|！|＠|＄|＾|＝|＼|｜|＇|／|？'.decode('utf-8')));
+aim_list.append(',');
 
 re_list.append(re.compile(u'^无品牌型号'));
 aim_list.append(u'无品牌,无型号,');
@@ -81,9 +81,18 @@ re_list.append(re.compile(u'@牌,'));
 aim_list.append(u'@牌:');
 re_list.append(re.compile(u'@品牌,'));
 aim_list.append(u'@品牌:');
+re_list.append(re.compile(u'[\(,]品牌,'));
+aim_list.append(u',品牌:');
+re_list.append(re.compile(u'品牌:,'));
+aim_list.append(u'品牌:');
+re_list.append(re.compile(u'@型号,'));
+aim_list.append(u'@型号:');
 
-re_list.append(re.compile('[;,]+'.decode('utf-8')));
+re_list.append(re.compile('[,]{2,}'.decode('utf-8')));
 aim_list.append(',');
+
+re_list.append(re.compile(': '.decode('utf-8')));
+aim_list.append(':');
 
 
 #re_list.append(re.compile(',\+'));
@@ -131,6 +140,7 @@ pai_pre_dict3 = {
 		'标记牌'.decode('utf-8'):0,
 		'标识牌'.decode('utf-8'):0,
 		'标志牌'.decode('utf-8'):0,
+		'标示牌'.decode('utf-8'):0,
 		'广告牌'.decode('utf-8'):0,
 		'行李牌'.decode('utf-8'):0,
 		'警示牌'.decode('utf-8'):0,
@@ -298,8 +308,8 @@ brand_re4 = re.compile('牌:[^:;,\s\\/\)@\|]+'.decode('utf-8'));
 brand_re5 = re.compile('品牌[^\s:;,\+\.\"\\/@\|]+'.decode('utf-8'));
 brand_re6 = re.compile('牌子[^\s:;,\+\.\"\\/@\|]+'.decode('utf-8'));
 
-brand_re7 = re.compile('[,;%:\s\(@][^,;:\s\\/%]+?牌'.decode('utf-8'));
-brand_re8 = re.compile('[,;%:\s\(@][^,;:\s\\/%]+?牌子'.decode('utf-8'));
+brand_re7 = re.compile('[,;@%:\s\(\)][^,;:@\s\(\)\\/%]+?牌'.decode('utf-8'));
+brand_re8 = re.compile('[,;@%:\s\(\)][^,;:@\s\(\)\\/%]+?牌子'.decode('utf-8'));
 brand_re9 = re.compile('^[^:;,\s\\/\"%\(]+?牌'.decode('utf-8'));
 
 
@@ -431,6 +441,7 @@ def cleaner(s):
 	s = re.sub('[,]+$','',s)
 	s = re.sub('[,]{2,}',',',s)
 	s = s.rstrip('|');
+	s = re.sub('^@','',s)
 	return s;
 
 #param1: input
