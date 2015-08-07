@@ -1,5 +1,8 @@
 package str_rec;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -8,24 +11,16 @@ import java.util.*;
  *
  */
 public class Tuple {
-	public double threshold;
-	public ArrayList<Cluster> clusterSet;
+	private static final String clusters_file_name = "./datasets/clusters";
+	private ArrayList<Cluster> cluster_list;
 	
-	public Tuple(double threshold) {
-		this.threshold=threshold;
-		this.clusterSet=new ArrayList<Cluster>();
-	}
-
-	/**
-	 * 设置cluster集，这里是深拷贝而不是浅拷贝
-	 * @param clusterSet cluster集
-	 */
-	public void SetClusterSet(ArrayList<Cluster> clusterSet) {
-		for(Cluster c : clusterSet) {
-			ArrayList<String> elements=new ArrayList<String>();
-			elements.addAll(c.elements);
-			Cluster newCluster=new Cluster(elements);
-			this.clusterSet.add(newCluster);
+	public Tuple(ArrayList<Cluster> cluster_list) {
+		this.cluster_list = new ArrayList<Cluster>();
+		for(Cluster c : cluster_list) {
+			ArrayList<String> elements = new ArrayList<String>();
+			elements.addAll(c.get_elements());
+			Cluster newCluster = new Cluster(elements);
+			this.cluster_list.add(newCluster);
 		}
 	}
 
@@ -34,28 +29,15 @@ public class Tuple {
 	 * @param cluster1
 	 * @param cluster2
 	 */
-	public void Union(Cluster cluster1,Cluster cluster2) {
-		String s1=cluster1.elements.get(0);//cluster1中的某个元素
-		String s2=cluster2.elements.get(0);//cluster2中的某个元素
-
-		//寻找s1和s2所在的cluster
-		//这里这样做的原因是为了处理“A和B合并后又发现B和C需要合并”的情况
-		int s1_index=0,s2_index=0;
-		for(Cluster cluster : clusterSet) {
-			if(cluster.elements.contains(s1)) {
-				s1_index=this.clusterSet.indexOf(cluster);
-			}
-			if(cluster.elements.contains(s2)) {
-				s2_index=this.clusterSet.indexOf(cluster);
-			}
-		}
-
-		if(s1_index==s2_index) {
+	public void Union(int cluster1_index, int cluster2_index) {
+		if(cluster1_index == cluster2_index) {
+			System.out.println("same cluster, doing nothing");
 			return;
 		}
-
-		this.clusterSet.get(s1_index).Union(this.clusterSet.get(s2_index));//合并
-		this.clusterSet.remove(s2_index);//移除被合并的Cluster
+		// 合并
+		this.cluster_list.get(cluster1_index).Union(this.cluster_list.get(cluster2_index));
+		// 移除被合并的Cluster
+		this.cluster_list.remove(cluster2_index);
     }
 	
 	/**
@@ -63,14 +45,43 @@ public class Tuple {
 	 * @return 结果
 	 */
 	public String toString() {
-		StringBuilder result=new StringBuilder();
+		StringBuilder result = new StringBuilder();
 		result.append("< ");
-		result.append(this.threshold+", ");
-		result.append(this.clusterSet.size()+", ");
-		for(Cluster c : this.clusterSet) {
+		result.append(this.cluster_list.size() + ", ");
+		for(int i = 0; i < this.cluster_list.size(); i++) {
+			Cluster c = this.cluster_list.get(i);
 			result.append(c.toString());
+			if(i != this.cluster_list.size() - 1) {
+				result.append(", ");
+			}
 		}
-		result.append(">");
+		result.append(" >");
 		return result.toString();
+	}
+	
+	public void record() {
+		FileWriter clusters_file_writer;
+		try {
+			clusters_file_writer = new FileWriter(clusters_file_name);
+			BufferedWriter clusters_buffered_writer = new BufferedWriter(clusters_file_writer);
+	        clusters_buffered_writer.append("total cluster number: " + this.cluster_list.size() + "\n");
+	        for(int i = 0; i < this.cluster_list.size(); i++) {
+	        	Cluster c = this.cluster_list.get(i);
+	        	clusters_buffered_writer.append(c.toString());
+				if(i != this.cluster_list.size() - 1) {
+					clusters_buffered_writer.append(", ");
+				}
+			}
+	        clusters_buffered_writer.close();
+	        clusters_file_writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+	}
+	/** get/set methods */
+	public ArrayList<Cluster> get_cluster_list() {
+		return this.cluster_list;
 	}
 }

@@ -1,133 +1,78 @@
 package str_rec;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.OutputStreamWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.Vector;
-
-import util.DB_manager;
+import java.io.FileWriter;
+import java.util.ArrayList;
 
 public class Test {
-	private static Vector<String[]> goods;
-
-	private static void read_data_from_db() {
-		String DB_DRIVER = "com.mysql.jdbc.Driver";
-		String DB_CONNECTION = "jdbc:mysql://ggcis01rdspublic.mysql.rds.aliyuncs.com:3309/cis_0001";
-		String DB_USER = "hzhg";
-		String DB_PASSWORD = "1qaz2wsx";
-		Connection connection = DB_manager.get_DB_connection(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
-		String query = "select distinct g_name, g_model from entry_list where code_ts = '8708299000';";
+	private static final String brands_file_name = "./datasets/initial_brands";
+	private static final String matrix_file_name = "./datasets/matrix";
+	private static final int scaling = 100;
+	
+	private static ArrayList<String> strings;
+	private static float[][] distance_matrix;
+	
+	private static void init() throws Exception {
+		strings = new ArrayList<String>();
 		
-		try {
-			PreparedStatement pstmt = connection.prepareStatement(query);
-			ResultSet rs = pstmt.executeQuery();
-			// read data
-			while(rs.next()) {
-				String g_name = rs.getString(1);
-				String g_model = rs.getString(2);
-				if (g_model == null) {
-					g_model = "";
-				}
-				String[] good = new String[2];
-				good[0] = g_name;
-				good[1] = g_model;
-				goods.add(good);
-			}
-			// end data preparation
-			if (rs != null) {
-				rs.close();
-			}
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (connection != null) {
-				connection.close();
-			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	private static void read_data_from_file() {
-		String gname_file_name = "/Users/edwardlol/Downloads/ALL_CODE/gname_all";
-		String gmodel_file_name = "/Users/edwardlol/Downloads/ALL_CODE/gmodel_all";
-		String g_name, g_model;
-        try {
-        	File gname_file = new File(gname_file_name);
-        	BufferedReader gname_reader = new BufferedReader(new FileReader(gname_file));
-        	File gmodel_file = new File(gmodel_file_name);
-        	BufferedReader gmodel_reader = new BufferedReader(new FileReader(gmodel_file));
-        	g_name = gname_reader.readLine();
-        	g_model = gmodel_reader.readLine();
-        	g_name = gname_reader.readLine();
-        	g_model = gmodel_reader.readLine();
-            while (g_name != null && g_model != null) {
-                String[] good = new String[2];
-                if (g_model.equals("NULL")) {
-					g_model = "";
-				}
-				good[0] = g_name;
-				good[1] = g_model;
-				goods.add(good);
-				g_name = gname_reader.readLine();
-	        	g_model = gmodel_reader.readLine();
-            }
-            gname_reader.close();
-            gmodel_reader.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        ArrayList<String> _strings = new ArrayList<String>();
+		LevensteinDistance ld = new LevensteinDistance();
+		
+    	FileReader file_reader = new FileReader(brands_file_name);
+    	BufferedReader buffered_reader = new BufferedReader(file_reader);
+    	String brand = buffered_reader.readLine();
+        while (brand != null) {
+        	_strings.add(brand);
+        	brand = buffered_reader.readLine();
         }
-	}
-	
-	private static void read_data(String from) {
-		if (from.toLowerCase().equals("db")) {
-			read_data_from_db();
-		} else if (from.toLowerCase().equals("file")) {
-			read_data_from_file();
-		} else {
-			System.out.println("wrong data source!");
+        strings.addAll(_strings.subList(0, _strings.size() / scaling));
+        buffered_reader.close();
+        file_reader.close();
+        
+        distance_matrix = new float[strings.size()][strings.size()];
+        for (int i = 0; i < strings.size(); i++) {
+			for (int j = i + 1; j < strings.size(); j ++) {
+				distance_matrix[i][j] = ld.getDistance(strings.get(i), strings.get(j));
+			}
 		}
+        
+        //debug
+        for (int j = 0; j < strings.size(); j++) {
+        	for (int i = j + 1; i < strings.size(); i++) {
+        		distance_matrix[i][j] = distance_matrix[j][i];
+        	}
+        }
+        
+        System.out.println("initialized!");
 	}
 	
+	private static void write_result() throws Exception{
+		FileWriter matrix_file_writer = new FileWriter(matrix_file_name);
+        BufferedWriter matrix_buffered_writer = new BufferedWriter(matrix_file_writer);
+        for (int i = 0; i < distance_matrix.length; i++) {
+			for (int j = 0; j < distance_matrix.length; j ++) {
+				matrix_buffered_writer.append(distance_matrix[i][j] + "");
+				if (j != strings.size() - 1) {
+					matrix_buffered_writer.append(", ");
+				}
+			}
+			matrix_buffered_writer.append(";\n");
+			matrix_buffered_writer.flush();
+		}
+        matrix_buffered_writer.close();
+        matrix_file_writer.close();
+	}
 	public static void main(String[] args) {
-		goods = new Vector<String[]>();
 		try {
-			read_data("file");
-			String filename = "./datasets/goods.txt";
-			File file = new File(filename);
-			FileOutputStream fos = new FileOutputStream(file);
-			OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
-			
-			for(String[] _good : goods) {
-				String g_name = _good[0];
-				String g_model = _good[1];
-				writer.append("g_name: " + g_name + "; g_model: " + g_model + "\n");
-				Good good = new Good();
-				good.set_good_by_gname(g_name);
-				good.set_good_by_gmodel(g_model);
-
-				writer.append("品牌: " + good.get_brand() + "\n");
-				writer.append("型号: " + good.get_type() + "\n");
-				writer.append("其他: " + good.get_discription() + "\n");
-			}
-			System.out.println("Data record done! see \"" + filename + "\"");
-			// end data preparation
-			if (writer != null) {
-		    	writer.close();
-		    }
-			if (fos != null) {
-				fos.close();
-			}
+			init();
+			HierarchicalCluster hc = new HierarchicalCluster(distance_matrix, strings);
+			hc.do_clustering();
+			hc.PrintResult();
+			write_result();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 }
-
