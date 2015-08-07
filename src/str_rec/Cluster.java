@@ -3,9 +3,7 @@ package str_rec;
 import java.util.ArrayList;
 
 /**
- * Cluster类，表示一个簇
- * @author Jason Han
- *
+ * Cluster类，表示一个聚类
  */
 public class Cluster {
 	private ArrayList<String> elements; // Cluster中的元素

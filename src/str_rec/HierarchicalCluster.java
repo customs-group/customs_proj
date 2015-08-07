@@ -3,9 +3,7 @@ package str_rec;
 import java.util.ArrayList;
 
 /**
- * 层次聚类Class
- * @author Jason Han
- *
+ * 层次聚类的过程类
  */
 public class HierarchicalCluster {
 	private ArrayList<String> original_brands; // 初始所有品牌名
@@ -70,12 +68,11 @@ public class HierarchicalCluster {
 			ArrayList<Cluster> pre_cluster_list = this.tuple_list.get(this.tuple_list.size() - 1).get_cluster_list();
 			// 新的tuple
 			Tuple tuple = new Tuple(pre_cluster_list);
-			//tuple.Union(pre_cluster_set.get(max_i), pre_cluster_set.get(max_j));
 			tuple.Union(max_i, max_j);
 			// 添加tuple
 			this.tuple_list.add(tuple);
-
-			this.update_matrix(this.distance_matrix, max_i, max_j);//更新距离矩阵
+			// 更新距离矩阵
+			this.update_matrix(this.distance_matrix, max_i, max_j);
 		}
 	}
 
@@ -93,14 +90,12 @@ public class HierarchicalCluster {
 		float[][] _distance_matrix = new float[distance_matrix.length - 1][distance_matrix.length - 1];
 		for (int i = 0; i < _distance_matrix.length; i++) {
 			for (int j = 0; j < _distance_matrix.length; j++) {
-				if (i < index_i) {
-					if (j < index_i) {
+				if (i < index_i || (index_i < i && i < index_j)) {
+					if (j < index_i || (index_i < j && j < index_j)) {
 						_distance_matrix[i][j] = distance_matrix[i][j];
 					} else if (j == index_i) {
 						_distance_matrix[i][j] = (distance_matrix[i][j] * cluster_num_i
 								+ distance_matrix[i][index_j] * cluster_num_j) / (cluster_num_i + cluster_num_j);
-					} else if (index_i < j && j < index_j) {
-						_distance_matrix[i][j] = distance_matrix[i][j];
 					} else if (j >= index_j) {
 						_distance_matrix[i][j] = distance_matrix[i][j + 1];
 					}
@@ -112,17 +107,6 @@ public class HierarchicalCluster {
 						_distance_matrix[i][j] = (distance_matrix[i][j + 1] * cluster_num_i
 								+ distance_matrix[index_j][j + 1] * cluster_num_j) / (cluster_num_i + cluster_num_j);
 					}
-				} else if (index_i < i && i < index_j) {
-					if (j < index_i) {
-						_distance_matrix[i][j] = distance_matrix[i][j];
-					} else if (j == index_i) {
-						_distance_matrix[i][j] = (distance_matrix[i][j] * cluster_num_i
-								+ distance_matrix[i][index_j] * cluster_num_j) / (cluster_num_i + cluster_num_j);
-					} else if (index_i < j && j < index_j) {
-						_distance_matrix[i][j] = distance_matrix[i][j];
-					} else if (j >= index_j) {
-						_distance_matrix[i][j] = distance_matrix[i][j + 1];
-					}
 				} else if (i >= index_j) {
 					if (j < index_i) {
 						_distance_matrix[i][j] = distance_matrix[i + 1][j];
@@ -130,7 +114,8 @@ public class HierarchicalCluster {
 						_distance_matrix[i][j] = (distance_matrix[i + 1][j] * cluster_num_i
 								+ distance_matrix[i + 1][index_j] * cluster_num_j) / (cluster_num_i + cluster_num_j);
 					} else if (index_i < j && j < index_j) {
-						_distance_matrix[i][j] = distance_matrix[i][j + 1];
+						//_distance_matrix[i][j] = distance_matrix[i][j + 1];
+						_distance_matrix[i][j] = distance_matrix[i + 1][j];
 					} else if (j >= index_j) {
 						_distance_matrix[i][j] = distance_matrix[i + 1][j + 1];
 					}
@@ -138,14 +123,12 @@ public class HierarchicalCluster {
 			}
 		}
 		this.distance_matrix = _distance_matrix;
-		
 	}
 	
 	/**
 	 * 打印结果
 	 */
 	public void PrintResult() {
-		System.out.println(this.tuple_list.get(this.tuple_list.size() - 1).toString());
 		this.tuple_list.get(this.tuple_list.size() - 1).record();
 	}
 	

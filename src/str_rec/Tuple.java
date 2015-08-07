@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * 元组类
- * @author Jason Han
- *
+ * 聚类中间结果类
  */
 public class Tuple {
 	private static final String clusters_file_name = "./datasets/clusters";
@@ -26,8 +24,8 @@ public class Tuple {
 
 	/**
 	 * 将两个cluster进行合并
-	 * @param cluster1
-	 * @param cluster2
+	 * @param cluster1_index
+	 * @param cluster2_index
 	 */
 	public void Union(int cluster1_index, int cluster2_index) {
 		if(cluster1_index == cluster2_index) {
@@ -40,25 +38,6 @@ public class Tuple {
 		this.cluster_list.remove(cluster2_index);
     }
 	
-	/**
-	 * 重新toString，便于打印
-	 * @return 结果
-	 */
-	public String toString() {
-		StringBuilder result = new StringBuilder();
-		result.append("< ");
-		result.append(this.cluster_list.size() + ", ");
-		for(int i = 0; i < this.cluster_list.size(); i++) {
-			Cluster c = this.cluster_list.get(i);
-			result.append(c.toString());
-			if(i != this.cluster_list.size() - 1) {
-				result.append(", ");
-			}
-		}
-		result.append(" >");
-		return result.toString();
-	}
-	
 	public void record() {
 		FileWriter clusters_file_writer;
 		try {
@@ -67,10 +46,8 @@ public class Tuple {
 	        clusters_buffered_writer.append("total cluster number: " + this.cluster_list.size() + "\n");
 	        for(int i = 0; i < this.cluster_list.size(); i++) {
 	        	Cluster c = this.cluster_list.get(i);
-	        	clusters_buffered_writer.append(c.toString());
-				if(i != this.cluster_list.size() - 1) {
-					clusters_buffered_writer.append(", ");
-				}
+	        	clusters_buffered_writer.append(c.toString() + "\n");
+	        	clusters_buffered_writer.flush();
 			}
 	        clusters_buffered_writer.close();
 	        clusters_file_writer.close();
@@ -78,7 +55,6 @@ public class Tuple {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
 	}
 	/** get/set methods */
 	public ArrayList<Cluster> get_cluster_list() {
