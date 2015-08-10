@@ -13,8 +13,8 @@ import java.util.Vector;
 import libsvm.svm_node;
 
 public class Data {
-	private static String ORIGINAL = "original";
-	private static String SCALED = "scaled";
+	public static enum data_type {original, scaled};
+	
 	private Vector<Double> labels;
 	private Vector<svm_node[]> original_set;
 	private Vector<svm_node[]> scaled_set;
@@ -23,6 +23,9 @@ public class Data {
 	private double scale_upper_bound;
 	private double scale_lower_bound;
 	
+	/**
+	 * initialization
+	 */
 	public Data() {
 		this.labels = new Vector<Double>();
 		this.original_set = new Vector<svm_node[]>();
@@ -33,7 +36,11 @@ public class Data {
 		this.scale_lower_bound = -1;
 	}
 	
-	/** transfer String to Double, in case some features are "null", "I", "E" or "" */
+	/**
+	 * transfer String to Double, in case some features are "null", "I", "E" or ""
+	 * @param string feature in string
+	 * @return feature in double
+	 */
 	private static Double stod(String string) {
 		Double result = 2.0; // should handle this error: "cannnot convert string to Double"
 		if (string == null || string.equals("") || string.equals("null") || string.equals("I")) {
@@ -50,7 +57,11 @@ public class Data {
 		return result;
 	}
 	
-	/** make the labels 1 or -1 */
+	/**
+	 * make the labels 1 or -1
+	 * @param label original label
+	 * @return standarlized label
+	 */
 	private static Double mklabel(Double label) {
 		Double _label;
 		if (label == 0) {
@@ -61,7 +72,12 @@ public class Data {
 		return _label;
 	}
 	
-	/** read data from database */
+	/**
+	 * read data from database
+	 * @param connection
+	 * @param query
+	 * @throws SQLException
+	 */
 	public void read_data(Connection connection, String query) throws SQLException {
 		PreparedStatement pstmt = connection.prepareStatement(query);
 		ResultSet rs = pstmt.executeQuery();
@@ -105,22 +121,26 @@ public class Data {
 
 	/**
 	 * record data to file
-	 * @param filename: filename to store data
-	 * @param data_type: "original" or "scaled", either lower or upper case accepted
+	 * @param filename file name to store data
+	 * @param type type of data to be recorded, original or scaled
+	 * @throws IOException
 	 */
-	public void record_data(String filename, String data_type) throws IOException {		
+	public void record_data(String filename, data_type type) throws IOException {		
 		String _filename;
 		Vector<svm_node[]> _set;
 		/* set file name for record */
-		if (data_type.toLowerCase() == ORIGINAL) {
-			_filename = "./datasets/data." + filename + "_original";
-			_set = original_set;
-		} else if (data_type.toLowerCase() == SCALED) {
-			_filename = "./datasets/data." + filename + "_scaled";
-			_set = scaled_set;
-		} else {
-			System.out.println("wrong data type, record failed");
-			return;
+		switch (type) {
+			case original:
+				_filename = "./datasets/data." + filename + "_original";
+				_set = original_set;
+				break;
+			case scaled:
+				_filename = "./datasets/data." + filename + "_scaled";
+				_set = scaled_set;
+				break;
+			default:
+				System.out.println("wrong data type, record failed");
+				return;
 		}
 		File file = new File(_filename);
 		FileOutputStream fos = new FileOutputStream(file);
@@ -144,9 +164,10 @@ public class Data {
 		}
 	}
 	
+	
 	/**
 	 * scale training data
-	 * @return: scaling parameter in double[][]
+	 * @return scaling parameter in double[][]
 	 * @double[0][0]: scale_upper_bound
 	 * @double[0][1]: scale_lower_bound
 	 * @double[i][0]: feature_max[i - 1], 1 <= i <= this.feature_num
@@ -213,7 +234,7 @@ public class Data {
 	
 	/**
 	 * scale testing data
-	 * @param: scale_param
+	 * @param scale_param
 	 * see: scale_data@param
 	 */
 	public void scale_data_from (double[][] scale_param) {
@@ -258,14 +279,15 @@ public class Data {
 	}
 	
 	/** get/set mothods */
-	public Vector<svm_node[]> get_set(String data_type) {
-		if (data_type.toLowerCase() == ORIGINAL) {
-			return this.original_set;
-		} else if (data_type.toLowerCase() == SCALED) {
-			return this.scaled_set;
-		} else {
-			System.out.println("wrong data type, original set returned");
-			return this.original_set;
+	public Vector<svm_node[]> get_set(data_type type) {
+		switch (type) {
+			case original:
+				return this.original_set;
+			case scaled:
+				return this.scaled_set;
+			default:
+				System.out.println("wrong data type, original set returned");
+				return this.original_set;
 		}
 	}
 	public Vector<Double> get_labels() {

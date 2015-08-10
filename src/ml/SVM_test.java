@@ -12,7 +12,7 @@ import libsvm.*;
 public class SVM_test {
 	/**
 	 * train svm model
-	 * @param data: data used to train the model
+	 * @param data data used to train the model
 	 * @return model
 	 */
 	public static svm_model svm_train(Data data) throws IOException {
@@ -24,7 +24,7 @@ public class SVM_test {
         problem.l = data.get_sample_num();
         problem.x = new svm_node[problem.l][];
 		for(int i = 0; i < problem.l; i++) {
-			problem.x[i] = data.get_set("scaled").get(i);
+			problem.x[i] = data.get_set(Data.data_type.scaled).get(i);
 		}
 		problem.y = new double[problem.l];
 		for(int i = 0; i < problem.l; i++) {
@@ -54,13 +54,13 @@ public class SVM_test {
 	
 	/**
 	 * predicte the labels of test data
-	 * @param model: model trained by svm_train
-	 * @param data: data used to test the model
+	 * @param model model trained by svm_train
+	 * @param data data used to test the model
 	 */
 	public static void svm_test(svm_model model, Data data) {
 		int hit = 0;
 		double hit_rate = 0.0;
-		Vector<svm_node[]> set = data.get_set("scaled");
+		Vector<svm_node[]> set = data.get_set(Data.data_type.scaled);
 		Vector<Double> labels = data.get_labels();
 		svm_node[] sample;
 		double real_label, predict_label;
@@ -162,11 +162,11 @@ public class SVM_test {
 			/* scale data */
 			test_data.scale_data_from(train_data.scale_data());
 			/* record train data */
-			train_data.record_data("train", "original");
-			train_data.record_data("train", "scaled");
+			train_data.record_data("train", Data.data_type.original);
+			train_data.record_data("train", Data.data_type.scaled);
 			/* record test data */
-			test_data.record_data("test", "original");
-			test_data.record_data("test", "scaled");
+			test_data.record_data("test", Data.data_type.original);
+			test_data.record_data("test", Data.data_type.scaled);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -179,6 +179,5 @@ public class SVM_test {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 }

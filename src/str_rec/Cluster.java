@@ -26,7 +26,7 @@ public class Cluster {
 	
 	/**
 	 * 和另一个Cluster合并
-	 * @param anotherCluster 被合并的cluster
+	 * @param another_cluster 被合并的cluster
 	 */
 	public void Union(Cluster another_cluster) {
 		this.brands.addAll(another_cluster.brands);

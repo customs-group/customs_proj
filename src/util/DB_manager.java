@@ -49,9 +49,10 @@ public class DB_manager {
 		try {
 			Class.forName(DB_DRIVER);
 			connection = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
-			return connection;
+//			return connection;
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			System.out.println("get db connection failed!");
+			e.printStackTrace();
 		}
 		return connection;
 	}
@@ -61,6 +62,7 @@ public class DB_manager {
 			try {
 				connection.close();
 			} catch (SQLException e) {
+				System.out.println("closing db connection failed!");
 				e.printStackTrace();
 			}
 		}

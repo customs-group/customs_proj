@@ -24,9 +24,9 @@ public class Grid_search {
 	
 	/**
 	 * train svm model
-	 * @param set: train set
-	 * @param labels: train labels
-	 * @param param: svm_parameter
+	 * @param set train set
+	 * @param labels train labels
+	 * @param param svm_parameter
 	 * @return model
 	 */
 	public static svm_model svm_train(Vector<svm_node[]> set, Vector<Double> labels, svm_parameter param) {
@@ -56,10 +56,10 @@ public class Grid_search {
 
 	/**
 	 * valid model accuracy
-	 * @param model: model to valid
-	 * @param set: test set
-	 * @param labels: test labels
-	 * @return hit: total hit num in test set
+	 * @param model model to valid
+	 * @param set test set
+	 * @param labels test labels
+	 * @return total hit num in test set
 	 */
 	public static int svm_valid(svm_model model, Vector<svm_node[]> set, Vector<Double> labels) {
 		int hit = 0;
@@ -76,8 +76,17 @@ public class Grid_search {
 		return hit;
 	}
 	
+	/**
+	 * do cross validation
+	 * @param data training data
+	 * @param power_of_c
+	 * @param power_of_g
+	 * @param fold_n the number n of n fold validation
+	 * @param param
+	 * @return best accuracy under this set of c and g
+	 */
 	private static double do_cross_validation(Data data, int power_of_c, int power_of_g, int fold_n, svm_parameter param) {
-		Vector<svm_node[]> set = data.get_set("scaled");
+		Vector<svm_node[]> set = data.get_set(Data.data_type.scaled);
 		Vector<Double> labels = data.get_labels();
 		svm_model model;
 		int total_hit = 0;
@@ -116,11 +125,15 @@ public class Grid_search {
 		return predict_accuracy;
 	}
 	
-	
 	private static svm_print_interface svm_print_null = new svm_print_interface() {
 		public void print(String s) {}
 	};
 	
+	/**
+	 * search the best svm parameter
+	 * @param data training data
+	 * @return svm_parameter
+	 */
 	public static svm_parameter update_param(Data data) {
 		// no training outputs
 		svm_print_interface print_func = svm_print_null;
@@ -212,8 +225,8 @@ public class Grid_search {
 			data.read_data(connection, train_query);
 			data.scale_data();
 			update_param(data);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		DB_manager.return_DB_connection(connection);
 	}
