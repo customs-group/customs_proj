@@ -6,21 +6,32 @@ import java.util.ArrayList;
  * Cluster类，表示一个聚类
  */
 public class Cluster {
-	private ArrayList<String> elements; // Cluster中的元素
-	private int element_num;
+	private ArrayList<String> brands; // Cluster中的元素
+	private ArrayList<Integer> brand_count; // 各个元素的数量
+	private int total_count; // 所有元素总数量
 	
-	public Cluster(ArrayList<String> elements) {
-		this.elements = elements;
-		this.element_num = this.elements.size();
+	/**
+	 * 初始化cluster
+	 * @param brands cluster内包含的品牌
+	 * @param brand_count cluster内所包含的品牌对应出现的次数
+	 */
+	public Cluster(ArrayList<String> brands, ArrayList<Integer> brand_count) {
+		this.brands = brands;
+		this.brand_count = brand_count;
+		this.total_count = 0;
+		for (Integer i : brand_count) {
+			this.total_count += i;
+		}
 	}
 	
 	/**
 	 * 和另一个Cluster合并
-	 * @param anotherCluster 另一个
+	 * @param anotherCluster 被合并的cluster
 	 */
 	public void Union(Cluster another_cluster) {
-		this.elements.addAll(another_cluster.elements);
-		this.element_num = this.elements.size();
+		this.brands.addAll(another_cluster.brands);
+		this.brand_count.addAll(another_cluster.brand_count);
+		this.total_count += another_cluster.total_count;
 		another_cluster = null;
 	}
 
@@ -30,9 +41,9 @@ public class Cluster {
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append("{");
-		for(int i = 0; i < this.elements.size(); i++) {
-			result.append(this.elements.get(i));
-			if(i != this.elements.size() - 1) {
+		for(int i = 0; i < this.brands.size(); i++) {
+			result.append(this.brands.get(i) + ": " + this.brand_count.get(i));
+			if(i != this.brands.size() - 1) {
 				result.append(", ");
 			}
 		}
@@ -40,10 +51,15 @@ public class Cluster {
 		return result.toString();
 	}
 	
-	public ArrayList<String> get_elements() {
-		return this.elements;
+	/** set/get methods */
+	public ArrayList<String> get_brands() {
+		return this.brands;
 	}
-	public int get_ele_num() {
-		return this.element_num;
+	public ArrayList<Integer> get_brand_count() {
+		return this.brand_count;
 	}
+	public int get_total_count() {
+		return this.total_count;
+	}
+	
 }

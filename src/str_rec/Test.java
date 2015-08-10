@@ -1,76 +1,66 @@
 package str_rec;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.util.ArrayList;
 
 public class Test {
-	private static final String brands_file_name = "./datasets/initial_brands";
+	private static final String brands_file_name = "./datasets/tar";
 	private static final String matrix_file_name = "./datasets/matrix";
-	private static final int scaling = 100;
+	private static final String clusters_file_name = "./datasets/clusters";
+	private static final int scaling = 3;
 	
-	private static ArrayList<String> strings;
-	private static float[][] distance_matrix;
+	private static HierarchicalCluster hierarchical_cluster;
 	
+	/**
+	 * 算法初始化
+	 * @throws Exception
+	 */
 	private static void init() throws Exception {
-		strings = new ArrayList<String>();
-		
-        ArrayList<String> _strings = new ArrayList<String>();
+        ArrayList<String> total_read_brands = new ArrayList<String>(); // 读取到的所有品牌
+        ArrayList<Integer> total_read_counts = new ArrayList<Integer>(); // 读取到的所有品牌的对应出现次数
+        
+		ArrayList<String> initial_brands = new ArrayList<String>(); // 提取一部分品牌用于算法测试
+		ArrayList<Integer> initial_counts = new ArrayList<Integer>(); // 提取出的品牌对应的出现次数
+        
 		LevensteinDistance ld = new LevensteinDistance();
 		
     	FileReader file_reader = new FileReader(brands_file_name);
     	BufferedReader buffered_reader = new BufferedReader(file_reader);
-    	String brand = buffered_reader.readLine();
-        while (brand != null) {
-        	_strings.add(brand);
-        	brand = buffered_reader.readLine();
+    	String brand_with_count = buffered_reader.readLine();
+        while (brand_with_count != null) {
+        	String[] result = brand_with_count.split("\\t");
+        	total_read_brands.add(result[0]);
+        	total_read_counts.add(Integer.parseInt(result[1]));
+        	brand_with_count = buffered_reader.readLine();
         }
-        strings.addAll(_strings.subList(0, _strings.size() / scaling));
+        initial_brands.addAll(total_read_brands.subList(0, total_read_brands.size() / scaling));
+        initial_counts.addAll(total_read_counts.subList(0, total_read_counts.size() / scaling));
         buffered_reader.close();
         file_reader.close();
         
-        distance_matrix = new float[strings.size()][strings.size()];
-        for (int i = 0; i < strings.size(); i++) {
-			for (int j = i + 1; j < strings.size(); j ++) {
-				distance_matrix[i][j] = ld.getDistance(strings.get(i), strings.get(j));
+        float[][] distance_matrix = new float[initial_brands.size()][initial_brands.size()];
+        for (int i = 0; i < initial_brands.size(); i++) {
+			for (int j = i + 1; j < initial_brands.size(); j ++) {
+				distance_matrix[i][j] = ld.getDistance(initial_brands.get(i), initial_brands.get(j));
 			}
 		}
         
-        //debug
-        for (int j = 0; j < strings.size(); j++) {
-        	for (int i = j + 1; i < strings.size(); i++) {
+        // 将上三角矩阵复制为完整矩阵
+        for (int j = 0; j < initial_brands.size(); j++) {
+        	for (int i = j + 1; i < initial_brands.size(); i++) {
         		distance_matrix[i][j] = distance_matrix[j][i];
         	}
         }
-        
+        hierarchical_cluster = new HierarchicalCluster(distance_matrix, initial_brands, initial_counts);
         System.out.println("initialized!");
 	}
-	
-	private static void write_result() throws Exception{
-		FileWriter matrix_file_writer = new FileWriter(matrix_file_name);
-        BufferedWriter matrix_buffered_writer = new BufferedWriter(matrix_file_writer);
-        for (int i = 0; i < distance_matrix.length; i++) {
-			for (int j = 0; j < distance_matrix.length; j ++) {
-				matrix_buffered_writer.append(distance_matrix[i][j] + "");
-				if (j != strings.size() - 1) {
-					matrix_buffered_writer.append(", ");
-				}
-			}
-			matrix_buffered_writer.append(";\n");
-			matrix_buffered_writer.flush();
-		}
-        matrix_buffered_writer.close();
-        matrix_file_writer.close();
-	}
+
 	public static void main(String[] args) {
 		try {
 			init();
-			HierarchicalCluster hc = new HierarchicalCluster(distance_matrix, strings);
-			hc.do_clustering();
-			hc.PrintResult();
-			write_result();
+			hierarchical_cluster.do_clustering();
+			hierarchical_cluster.record_result(clusters_file_name, matrix_file_name);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -35,6 +35,7 @@ public class Good {
 		this.type = "无";
 		this.discription = "";
 	}
+	
 	static {
 		brand_filter0 = "无品?牌";
 		brand_filter1 = "品牌:+([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 品牌:xxx
@@ -109,6 +110,9 @@ public class Good {
 		brand_pre_dict_3.add("扑克牌");
 	}
 	
+	/**
+	 * 符号标准化
+	 */
 	private void normalize_symbol() {
 		this.normalized_string = this.original_string;
 		Set<String> keys = normalizer_map.keySet();
@@ -117,6 +121,9 @@ public class Good {
 		}
 	}
 	
+	/**
+	 * 过滤固定词组
+	 */
 	private void filter_words() {
 		this.filtered_string = this.normalized_string;
 		//this.filtered_string.replaceAll("", replacement);
@@ -128,6 +135,10 @@ public class Good {
 		}
 	}
 	
+	/**
+	 * 通过g_name设定商品属性
+	 * @param string g_name
+	 */
 	public void set_good_by_gname(String string) {
 		this.original_string = string;
 		this.normalize_symbol();
@@ -159,6 +170,10 @@ public class Good {
 		}
 	}
 	
+	/**
+	 * 通过g_model设定商品属性
+	 * @param string g_model
+	 */
 	public void set_good_by_gmodel(String string) {
 		this.original_string = string;
 		this.normalize_symbol();

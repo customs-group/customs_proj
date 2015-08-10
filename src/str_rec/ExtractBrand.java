@@ -15,6 +15,9 @@ import util.DB_manager;
 public class ExtractBrand {
 	private static Vector<String[]> goods;
 
+	/**
+	 * 从数据库读取数据
+	 */
 	private static void read_data_from_db() {
 		String DB_DRIVER = "com.mysql.jdbc.Driver";
 		String DB_CONNECTION = "jdbc:mysql://ggcis01rdspublic.mysql.rds.aliyuncs.com:3309/cis_0001";
@@ -54,6 +57,9 @@ public class ExtractBrand {
 		}
 	}
 	
+	/**
+	 * 从文件读取数据
+	 */
 	private static void read_data_from_file() {
 		String gname_file_name = "/Users/edwardlol/Downloads/ALL_CODE/gname_all";
 		String gmodel_file_name = "/Users/edwardlol/Downloads/ALL_CODE/gmodel_all";
@@ -85,6 +91,10 @@ public class ExtractBrand {
         }
 	}
 	
+	/**
+	 * 读取数据
+	 * @param from 读取的源类型
+	 */
 	private static void read_data(String from) {
 		if (from.toLowerCase().equals("db")) {
 			read_data_from_db();

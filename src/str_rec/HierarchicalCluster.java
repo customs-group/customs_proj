@@ -1,23 +1,27 @@
 package str_rec;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * 层次聚类的过程类
+ * 层次聚类
  */
 public class HierarchicalCluster {
 	private ArrayList<String> original_brands; // 初始所有品牌名
 	private float[][] origion_distance_matrix; // 初始相似度矩阵
-	private float[][] distance_matrix; // 相似度矩阵
+	private float[][] distance_matrix; // 相似度矩阵计算结果
 	private ArrayList<Tuple> tuple_list; // 保存每次cluster结果集
 	private static final float threshold = 0.6f;
 	
 	/**
 	 * 算法初始化
-	 * @param distanceMatrix 距离矩阵
-	 * @param elementNames 元素集
+	 * @param distanceMatrix 初始距离矩阵
+	 * @param original_brands 初始品牌列表
+	 * @param brand_count 初始品牌列表所对应品牌数量
 	 */
-	public HierarchicalCluster(float[][] distance_matrix, ArrayList<String> original_brands) {
+	public HierarchicalCluster(float[][] distance_matrix, ArrayList<String> original_brands, ArrayList<Integer> brand_count) {
 		// error check
 		if(distance_matrix.length <= 0
 				|| distance_matrix.length != distance_matrix[0].length
@@ -30,27 +34,28 @@ public class HierarchicalCluster {
 		this.origion_distance_matrix = distance_matrix;
 		this.distance_matrix = distance_matrix;
 
-		// deep copy
+		// init tuple list
 		this.tuple_list = new ArrayList<Tuple>();
-		ArrayList<Cluster> cluster_set = new ArrayList<Cluster>();
+		ArrayList<Cluster> cluster_list = new ArrayList<Cluster>();
 		for(int i = 0; i < original_brands.size(); i++) {
-			ArrayList<String> brands = new ArrayList<String>();
-			brands.add(original_brands.get(i));
-			cluster_set.add(new Cluster(brands));
+			ArrayList<String> _brands = new ArrayList<String>();
+			ArrayList<Integer> _brand_count = new ArrayList<Integer>();
+			_brands.add(original_brands.get(i));
+			_brand_count.add(brand_count.get(i));
+			cluster_list.add(new Cluster(_brands, _brand_count));
 		}
-		Tuple first_tuple = new Tuple(cluster_set);
+		Tuple first_tuple = new Tuple(cluster_list);
 		this.tuple_list.add(first_tuple);
 	}
 
 	/**
 	 * 进行聚类
-	 * @param type 聚类的方式
 	 */
 	public void do_clustering() {
 		while(true) {
 			float max_similarity = Float.MIN_VALUE;
 			int max_i = 0, max_j = 0;
-			// 遍历矩阵右上角, j > i
+			// 遍历矩阵右上角寻找相似度最大值, j > i
 			for(int i = 0; i < this.distance_matrix.length; i++) {
 				for(int j = i + 1; j < this.distance_matrix.length; j++) {
 					if(this.distance_matrix[i][j] > max_similarity) {
@@ -75,18 +80,17 @@ public class HierarchicalCluster {
 			this.update_matrix(this.distance_matrix, max_i, max_j);
 		}
 	}
-
 	
 	/**
 	 * 重新计算距离矩阵
 	 * @param distanceMatrix 需要更新的距离矩阵
-	 * @param tuple 目前的tuple
-	 * @param type 算法方式（Single Link等等）
+	 * @param index_i 需要合并的第一个cluster
+	 * @param index_j 需要合并的第二个cluster
 	 */
 	private void update_matrix(float[][] distance_matrix, int index_i, int index_j) {
 		// 遍历更新距离矩阵右上角
-		int cluster_num_i = this.tuple_list.get(this.tuple_list.size() - 2).get_cluster_list().get(index_i).get_ele_num();
-		int cluster_num_j = this.tuple_list.get(this.tuple_list.size() - 2).get_cluster_list().get(index_j).get_ele_num();
+		int cluster_num_i = this.tuple_list.get(this.tuple_list.size() - 2).get_cluster_list().get(index_i).get_total_count();
+		int cluster_num_j = this.tuple_list.get(this.tuple_list.size() - 2).get_cluster_list().get(index_j).get_total_count();
 		float[][] _distance_matrix = new float[distance_matrix.length - 1][distance_matrix.length - 1];
 		for (int i = 0; i < _distance_matrix.length; i++) {
 			for (int j = 0; j < _distance_matrix.length; j++) {
@@ -126,14 +130,36 @@ public class HierarchicalCluster {
 	}
 	
 	/**
-	 * 打印结果
+	 * 纪录cluster结果和距离矩阵
+	 * @throws IOException 
 	 */
-	public void PrintResult() {
-		this.tuple_list.get(this.tuple_list.size() - 1).record();
+	public void record_result(String clusters_file_name, String matrix_file_name) throws IOException {
+		// record clusters
+		this.tuple_list.get(this.tuple_list.size() - 1).record(clusters_file_name);
+		// record distance matrix
+		FileWriter matrix_file_writer = new FileWriter(matrix_file_name);
+        BufferedWriter matrix_buffered_writer = new BufferedWriter(matrix_file_writer);
+        float[][] distance_matrix = this.get_distance_matrix();
+        for (int i = 0; i < distance_matrix.length; i++) {
+			for (int j = 0; j < distance_matrix.length; j ++) {
+				matrix_buffered_writer.append(distance_matrix[i][j] + "");
+				if (j != distance_matrix.length - 1) {
+					matrix_buffered_writer.append(", ");
+				}
+			}
+			matrix_buffered_writer.append(";\n");
+			matrix_buffered_writer.flush();
+		}
+        matrix_buffered_writer.close();
+        matrix_file_writer.close();
 	}
 	
+	/** get/set mothods */
 	public float[][] get_origion_distance_matrix() {
 		return this.origion_distance_matrix;
+	}
+	public float[][] get_distance_matrix() {
+		return this.distance_matrix;
 	}
 	public ArrayList<String> get_original_brands() {
 		return this.original_brands;
