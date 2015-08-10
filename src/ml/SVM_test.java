@@ -10,7 +10,6 @@ import util.DB_manager;
 import libsvm.*;
 
 public class SVM_test {
-	
 	/**
 	 * train svm model
 	 * @param data: data used to train the model
@@ -99,11 +98,6 @@ public class SVM_test {
 	}
 	
 	public static void main(String[] args) {
-		String DB_DRIVER = "com.mysql.jdbc.Driver";
-		String DB_CONNECTION = "jdbc:mysql://ggcis01rdspublic.mysql.rds.aliyuncs.com:3309/cis_0001";
-		String DB_USER = "hzhg";
-		String DB_PASSWORD = "1qaz2wsx";
-		
 		/* query: get sets from database
 		 * colom 1: labels
 		 * colom 2 - N: features
@@ -158,7 +152,7 @@ public class SVM_test {
 		test_query += " where '2010-03-05' <= entry_head.d_date and entry_head.special_flag = 0 " + test_limit + ");";
 		
 
-		Connection connection = DB_manager.get_DB_connection(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
+		Connection connection = DB_manager.get_DB_connection();
 		Data train_data = new Data();
 		Data test_data = new Data();
 		try {

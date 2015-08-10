@@ -169,11 +169,6 @@ public class Grid_search {
 	}
 	
 	public static void main(String[] args) {
-		String DB_DRIVER = "com.mysql.jdbc.Driver";
-		String DB_CONNECTION = "jdbc:mysql://ggcis01rdspublic.mysql.rds.aliyuncs.com:3309/cis_0001";
-		String DB_USER = "hzhg";
-		String DB_PASSWORD = "1qaz2wsx";
-		
 		/* query: get sets from database
 		 * colom 1: labels
 		 * colom 2 - N: features
@@ -210,7 +205,7 @@ public class Grid_search {
 		train_query += " from entry_head inner join entry_list on entry_head.entry_id = entry_list.entry_id";
 		train_query += " where entry_head.d_date < '2010-03-05' and entry_head.special_flag = 0 " + limit + ");";
 
-		Connection connection = DB_manager.get_DB_connection(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
+		Connection connection = DB_manager.get_DB_connection();
 		
 		Data data = new Data();
 		try {

@@ -19,11 +19,7 @@ public class ExtractBrand {
 	 * 从数据库读取数据
 	 */
 	private static void read_data_from_db() {
-		String DB_DRIVER = "com.mysql.jdbc.Driver";
-		String DB_CONNECTION = "jdbc:mysql://ggcis01rdspublic.mysql.rds.aliyuncs.com:3309/cis_0001";
-		String DB_USER = "hzhg";
-		String DB_PASSWORD = "1qaz2wsx";
-		Connection connection = DB_manager.get_DB_connection(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
+		Connection connection = DB_manager.get_DB_connection();
 		String query = "select distinct g_name, g_model from entry_list where code_ts = '8708299000';";
 		
 		try {
@@ -48,13 +44,11 @@ public class ExtractBrand {
 			if (pstmt != null) {
 				pstmt.close();
 			}
-			if (connection != null) {
-				connection.close();
-			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		DB_manager.return_DB_connection(connection);
 	}
 	
 	/**
