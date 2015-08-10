@@ -126,7 +126,6 @@ public class Good {
 	 */
 	private void filter_words() {
 		this.filtered_string = this.normalized_string;
-		//this.filtered_string.replaceAll("", replacement);
 		for (String s : brand_pre_dict_2) {
 			this.filtered_string = this.filtered_string.replaceAll(s, "");
 		}
@@ -240,9 +239,9 @@ public class Good {
 			} else {
 				this.type = "无";
 			}
-			Pattern discryption_pattern = Pattern.compile("^[A-Za-z0-9_.-]+$");
-			Matcher discryption_matcher = discryption_pattern.matcher(this.discription);
-			if (this.type.equals("无") && discryption_matcher.find()) {
+			Pattern discription_pattern = Pattern.compile("^[A-Za-z0-9_.-]+$");
+			Matcher discription_matcher = discription_pattern.matcher(this.discription);
+			if (this.type.equals("无") && discription_matcher.find()) {
 				this.type = this.discription;
 				this.discription = "";
 			}

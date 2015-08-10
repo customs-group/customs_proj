@@ -13,6 +13,7 @@ import java.util.Vector;
 import util.DB_manager;
 
 public class ExtractBrand {
+	public static enum read_type {db, file};
 	private static Vector<String[]> goods;
 
 	/**
@@ -27,14 +28,12 @@ public class ExtractBrand {
 			ResultSet rs = pstmt.executeQuery();
 			// read data
 			while(rs.next()) {
-				String g_name = rs.getString(1);
-				String g_model = rs.getString(2);
-				if (g_model == null) {
-					g_model = "";
-				}
 				String[] good = new String[2];
-				good[0] = g_name;
-				good[1] = g_model;
+				good[0] = rs.getString(1);
+				good[1] = rs.getString(2);
+				if (good[1] == null) {
+					good[1] = "";
+				}
 				goods.add(good);
 			}
 			// end data preparation
@@ -55,31 +54,27 @@ public class ExtractBrand {
 	 * 从文件读取数据
 	 */
 	private static void read_data_from_file() {
-		String gname_file_name = "/Users/edwardlol/Downloads/ALL_CODE/gname_all";
-		String gmodel_file_name = "/Users/edwardlol/Downloads/ALL_CODE/gmodel_all";
-		String g_name, g_model;
+		String source_file = "./datasets/original/all";
         try {
-        	File gname_file = new File(gname_file_name);
-        	BufferedReader gname_reader = new BufferedReader(new FileReader(gname_file));
-        	File gmodel_file = new File(gmodel_file_name);
-        	BufferedReader gmodel_reader = new BufferedReader(new FileReader(gmodel_file));
-        	g_name = gname_reader.readLine();
-        	g_model = gmodel_reader.readLine();
-        	g_name = gname_reader.readLine();
-        	g_model = gmodel_reader.readLine();
-            while (g_name != null && g_model != null) {
-                String[] good = new String[2];
-                if (g_model.equals("NULL")) {
-					g_model = "";
+			FileReader file_reader = new FileReader(source_file);
+	    	BufferedReader buffered_reader = new BufferedReader(file_reader);
+	    	String _read_result = buffered_reader.readLine();
+            while (_read_result != null) {
+            	String[] read_result = new String[5];
+            	String[] good = new String[2];
+            	System.out.println(_read_result);
+            	read_result = _read_result.split("\\t");
+            	System.out.println(read_result);
+            	good[0] = read_result[2];
+            	good[1] = read_result[3];
+            	if (good[1].equals("NULL")) {
+					good[1] = "";
 				}
-				good[0] = g_name;
-				good[1] = g_model;
-				goods.add(good);
-				g_name = gname_reader.readLine();
-	        	g_model = gmodel_reader.readLine();
+            	goods.add(good);
+            	_read_result = buffered_reader.readLine();
             }
-            gname_reader.close();
-            gmodel_reader.close();
+            buffered_reader.close();
+            file_reader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,20 +84,24 @@ public class ExtractBrand {
 	 * 读取数据
 	 * @param from 读取的源类型
 	 */
-	private static void read_data(String from) {
-		if (from.toLowerCase().equals("db")) {
-			read_data_from_db();
-		} else if (from.toLowerCase().equals("file")) {
-			read_data_from_file();
-		} else {
-			System.out.println("wrong data source!");
+	private static void read_data(read_type type) {
+		switch (type) {
+			case db:
+				read_data_from_db();
+				break;
+			case file:
+				read_data_from_file();
+				break;
+			default:
+				System.out.println("wrong data source!");
+				break;
 		}
 	}
 	
 	public static void main(String[] args) {
 		goods = new Vector<String[]>();
 		try {
-			read_data("file");
+			read_data(read_type.file);
 			String filename = "./datasets/goods.txt";
 			File file = new File(filename);
 			FileOutputStream fos = new FileOutputStream(file);
