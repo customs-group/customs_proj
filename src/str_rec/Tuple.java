@@ -19,11 +19,11 @@ public class Tuple {
 	public Tuple(ArrayList<Cluster> cluster_list) {
 		this.cluster_list = new ArrayList<Cluster>();
 		for(Cluster cluster : cluster_list) {
-			ArrayList<String> elements = new ArrayList<String>();
-			ArrayList<Integer> element_nums = new ArrayList<Integer>();
-			elements.addAll(cluster.get_brands());
-			element_nums.addAll(cluster.get_brand_count());
-			Cluster new_cluster = new Cluster(elements, element_nums);
+			ArrayList<String> brands = new ArrayList<String>();
+			ArrayList<Integer> brand_count = new ArrayList<Integer>();
+			brands.addAll(cluster.get_brands());
+			brand_count.addAll(cluster.get_brand_count());
+			Cluster new_cluster = new Cluster(brands, brand_count);
 			this.cluster_list.add(new_cluster);
 		}
 	}
@@ -48,18 +48,17 @@ public class Tuple {
 	 * @param clusters_file_name 输出文件名
 	 */
 	public void record(String clusters_file_name) {
-		FileWriter clusters_file_writer;
 		try {
-			clusters_file_writer = new FileWriter(clusters_file_name);
-			BufferedWriter clusters_buffered_writer = new BufferedWriter(clusters_file_writer);
-	        clusters_buffered_writer.append("total cluster count: " + this.cluster_list.size() + "\n");
+			FileWriter file_writer = new FileWriter(clusters_file_name);
+			BufferedWriter buffered_writer = new BufferedWriter(file_writer);
+			buffered_writer.append("total cluster count: " + this.cluster_list.size() + "\n");
 	        for(int i = 0; i < this.cluster_list.size(); i++) {
 	        	Cluster cluster = this.cluster_list.get(i);
-	        	clusters_buffered_writer.append(cluster.toString() + "\n");
-	        	clusters_buffered_writer.flush();
+	        	buffered_writer.append(cluster.toString() + "\n");
+	        	buffered_writer.flush();
 			}
-	        clusters_buffered_writer.close();
-	        clusters_file_writer.close();
+	        buffered_writer.close();
+	        file_writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

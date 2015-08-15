@@ -10,9 +10,9 @@ import java.util.ArrayList;
  */
 public class HierarchicalCluster {
 	private ArrayList<String> original_brands; // 初始所有品牌名
+	private ArrayList<Tuple> tuple_list; // 保存每次cluster结果集
 	private float[][] origion_distance_matrix; // 初始相似度矩阵
 	private float[][] distance_matrix; // 相似度矩阵计算结果
-	private ArrayList<Tuple> tuple_list; // 保存每次cluster结果集
 	private static final float threshold = 0.6f;
 	
 	/**
@@ -95,32 +95,40 @@ public class HierarchicalCluster {
 		for (int i = 0; i < _distance_matrix.length; i++) {
 			for (int j = 0; j < _distance_matrix.length; j++) {
 				if (i < index_i || (index_i < i && i < index_j)) {
+					// 0~index_i 以及 index_i~index_j 列之间
 					if (j < index_i || (index_i < j && j < index_j)) {
+						// 0～index_i 以及 index_i~index_j 行之间, 直接拷贝
 						_distance_matrix[i][j] = distance_matrix[i][j];
 					} else if (j == index_i) {
+						// 第index_i行, 合并cluster, 更新距离
 						_distance_matrix[i][j] = (distance_matrix[i][j] * cluster_num_i
 								+ distance_matrix[i][index_j] * cluster_num_j) / (cluster_num_i + cluster_num_j);
 					} else if (j >= index_j) {
+						// index_j行之后, 上移一行
 						_distance_matrix[i][j] = distance_matrix[i][j + 1];
 					}
 				} else if (i == index_i) {
+					// 第index_i列
 					if (j < index_j) {
+						// index_j行之前, 合并cluster, 更新距离
 						_distance_matrix[i][j] = (distance_matrix[i][j] * cluster_num_i
 								+ distance_matrix[index_j][j] * cluster_num_j) / (cluster_num_i + cluster_num_j);
 					} else if (j >= index_j) {
+						// index_j行之后, 更新距离并上移一行
 						_distance_matrix[i][j] = (distance_matrix[i][j + 1] * cluster_num_i
 								+ distance_matrix[index_j][j + 1] * cluster_num_j) / (cluster_num_i + cluster_num_j);
 					}
 				} else if (i >= index_j) {
-					if (j < index_i) {
+					// index_j列及之后, 整体左移一列
+					if (j < index_i || (index_i < j && j < index_j)) {
+						// 0～index_i 以及 index_i~index_j 行之间, 左移一列
 						_distance_matrix[i][j] = distance_matrix[i + 1][j];
 					} else if (j == index_i) {
+						// index_i行, 更新距离并左移一行
 						_distance_matrix[i][j] = (distance_matrix[i + 1][j] * cluster_num_i
 								+ distance_matrix[i + 1][index_j] * cluster_num_j) / (cluster_num_i + cluster_num_j);
-					} else if (index_i < j && j < index_j) {
-						//_distance_matrix[i][j] = distance_matrix[i][j + 1];
-						_distance_matrix[i][j] = distance_matrix[i + 1][j];
 					} else if (j >= index_j) {
+						// index_j列之后, 左移一列, 上移一行
 						_distance_matrix[i][j] = distance_matrix[i + 1][j + 1];
 					}
 				}
@@ -137,21 +145,21 @@ public class HierarchicalCluster {
 		// record clusters
 		this.tuple_list.get(this.tuple_list.size() - 1).record(clusters_file_name);
 		// record distance matrix
-		FileWriter matrix_file_writer = new FileWriter(matrix_file_name);
-        BufferedWriter matrix_buffered_writer = new BufferedWriter(matrix_file_writer);
+		FileWriter file_writer = new FileWriter(matrix_file_name);
+        BufferedWriter buffered_writer = new BufferedWriter(file_writer);
         float[][] distance_matrix = this.get_distance_matrix();
         for (int i = 0; i < distance_matrix.length; i++) {
 			for (int j = 0; j < distance_matrix.length; j ++) {
-				matrix_buffered_writer.append(distance_matrix[i][j] + "");
+				buffered_writer.append(distance_matrix[i][j] + "");
 				if (j != distance_matrix.length - 1) {
-					matrix_buffered_writer.append(", ");
+					buffered_writer.append(", ");
 				}
 			}
-			matrix_buffered_writer.append(";\n");
-			matrix_buffered_writer.flush();
+			buffered_writer.append(";\n");
+			buffered_writer.flush();
 		}
-        matrix_buffered_writer.close();
-        matrix_file_writer.close();
+        buffered_writer.close();
+        file_writer.close();
 	}
 	
 	/** get/set mothods */
