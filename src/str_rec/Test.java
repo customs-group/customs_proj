@@ -57,15 +57,16 @@ public class Test {
 	}
 
 	public static void main(String[] args) {
-		if (args.length!=3) {
-			System.err.println("Input File: " + args[0] + '\n' + "Matrix File: " + args[1] + '\n' + "Cluster File: " + args[2]);
+
+		if (args.length != 3) {
 			System.err.println("Error:: Missing parameters!");
+			System.err.println("Test: brands_file_name matrix_file_name cluster_file_name");
 			return;
 		}
 		try {
 			init(args[0]);
 			hierarchical_cluster.do_clustering();
-			hierarchical_cluster.record_result(clusters_file_name, matrix_file_name);
+			hierarchical_cluster.record_result(args[1],args[2]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

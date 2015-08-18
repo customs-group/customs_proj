@@ -8,8 +8,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class Pre_proccess {
-//    private static final String source_file = "/Users/LU/Downloads/ALL_CODE/out";
-//    private static final String target_file = "/Users/LU/Downloads/ALL_CODE/tar";
+    
     private static String in_file = "";
     private static String out_file = "";
 
@@ -18,8 +17,8 @@ public class Pre_proccess {
     public static void main(String[] args) {
 
         if (args.length != 2){
-            System.err.println("Input File: " + args[0] + '\t' + "Output File: " + args[1]);
             System.err.println("Error:: Missing parameters!");
+            System.err.println("PreProcess: InputFile OutputFile");
             return;
         }
         try {
