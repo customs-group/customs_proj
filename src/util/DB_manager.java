@@ -23,19 +23,17 @@ public class DB_manager {
 	    	String config = buffered_reader.readLine();
 	        while (config != null) {
 	        	String[] result = config.split(": ");
-	        	switch (result[0]) {
-	        	case "DB_CONNECTION":
-	        		DB_CONNECTION = result[1];
-	        		break;
-	        	case "DB_USER":
-	        		DB_USER = result[1];
-	        		break;
-	        	case "DB_PASSWORD":
-	        		DB_PASSWORD = result[1];
-	        		break;
-	        	default:
-	        		break;
-	        	}
+				if (result[0].equals("DB_CONNECTION")) {
+					DB_CONNECTION = result[1];
+
+				} else if (result[0].equals("DB_USER")) {
+					DB_USER = result[1];
+
+				} else if (result[0].equals("DB_PASSWORD")) {
+					DB_PASSWORD = result[1];
+
+				} else {
+				}
 	        	config = buffered_reader.readLine();
 	        }
 	        buffered_reader.close();

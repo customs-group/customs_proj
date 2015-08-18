@@ -5,9 +5,9 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 public class Test {
-	private static final String brands_file_name = "./datasets/tar";
-	private static final String matrix_file_name = "./datasets/matrix";
-	private static final String clusters_file_name = "./datasets/clusters";
+	private static final String brands_file_name = "/Users/LU/Downloads/ALL_CODE/tar";
+	private static final String matrix_file_name = "/Users/LU/Downloads/ALL_CODE/matrix";
+	private static final String clusters_file_name = "/Users/LU/Downloads/ALL_CODE/clusters";
 	private static final int scaling = 3;
 	
 	private static HierarchicalCluster hierarchical_cluster;
@@ -16,7 +16,7 @@ public class Test {
 	 * 算法初始化
 	 * @throws Exception
 	 */
-	private static void init() throws Exception {
+	private static void init(String in) throws Exception {
         ArrayList<String> total_read_brands = new ArrayList<String>(); // 读取到的所有品牌
         ArrayList<Integer> total_read_counts = new ArrayList<Integer>(); // 读取到的所有品牌的对应出现次数
         
@@ -25,7 +25,7 @@ public class Test {
         
 		LevensteinDistance ld = new LevensteinDistance();
 		
-    	FileReader file_reader = new FileReader(brands_file_name);
+    	FileReader file_reader = new FileReader(in);
     	BufferedReader buffered_reader = new BufferedReader(file_reader);
     	String brand_with_count = buffered_reader.readLine();
         while (brand_with_count != null) {
@@ -57,8 +57,13 @@ public class Test {
 	}
 
 	public static void main(String[] args) {
+		if (args.length!=3) {
+			System.err.println("Input File: " + args[0] + '\n' + "Matrix File: " + args[1] + '\n' + "Cluster File: " + args[2]);
+			System.err.println("Error:: Missing parameters!");
+			return;
+		}
 		try {
-			init();
+			init(args[0]);
 			hierarchical_cluster.do_clustering();
 			hierarchical_cluster.record_result(clusters_file_name, matrix_file_name);
 		} catch (Exception e) {

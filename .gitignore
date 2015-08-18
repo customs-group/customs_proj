@@ -1,6 +1,7 @@
 /Lib/*
 /datasets/*
 /custom_proj.conf
+/.idea/*
 
 # Compiled source #
 ###################
