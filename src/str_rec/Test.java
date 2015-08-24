@@ -60,7 +60,7 @@ public class Test {
 
 		if (args.length != 3) {
 			System.err.println("Error:: Missing parameters!");
-			System.err.println("Test: brands_file_name matrix_file_name cluster_file_name");
+			System.err.println("Test: brands_file_name cluster_file_name matrix_file_name");
 			return;
 		}
 		try {

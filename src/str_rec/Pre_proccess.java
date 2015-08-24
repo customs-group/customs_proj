@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class Pre_proccess {
-    
+
     private static String in_file = "";
     private static String out_file = "";
 
@@ -37,15 +37,16 @@ public class Pre_proccess {
                 if (!read_result.equals("@@")) {
                     String[] result = read_result.split("@@");
                     String key = result[0];
+//                    if (key.equals("B"))
+//                        System.out.println(read_result);
                     if (brand_and_count.containsKey(key)) {
                         brand_and_count.put(key, brand_and_count.get(key) + 1);
                     } else {
                         brand_and_count.put(key, 1);
                     }
-
                 } else {
                     System.out.println(read_result);
-                    return;
+//                    return;
                 }
                 read_result = buffered_reader.readLine();
             }
