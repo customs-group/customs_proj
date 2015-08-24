@@ -42,7 +42,9 @@ public class Cluster {
 		StringBuilder result = new StringBuilder();
 		result.append("{");
 		for(int i = 0; i < this.brands.size(); i++) {
-			result.append(this.brands.get(i) + ": " + this.brand_count.get(i));
+			result.append(this.brands.get(i));
+			result.append(": ");
+			result.append(this.brand_count.get(i));
 			if(i != this.brands.size() - 1) {
 				result.append(", ");
 			}

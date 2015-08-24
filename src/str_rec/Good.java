@@ -49,7 +49,7 @@ public class Good {
 		type_filter3 = "([A-Za-z0-9_\u4E00-\u9FA5]+?)(型?号)([^A-Za-z0-9_\u4E00-\u9FA5]|$)"; // xxx型号
 		type_filter4 = "([A-Za-z0-9_\u4E00-\u9FA5]+)([^型])号"; // xxx型blabla
 		
-		normalizer_map = new HashMap<String, String>();
+		normalizer_map = new HashMap<>();
 		normalizer_map.put("｀", "`");
 		normalizer_map.put("～", "~");
 		normalizer_map.put("！", "!");
@@ -85,7 +85,7 @@ public class Good {
 		normalizer_map.put("、", "\\\\");
 		normalizer_map.put("｜", "|");
 		
-		brand_pre_dict_2 = new HashSet<String>();
+		brand_pre_dict_2 = new HashSet<>();
 		brand_pre_dict_2.add("吊牌");
 		brand_pre_dict_2.add("门牌");
 		brand_pre_dict_2.add("车牌");
@@ -95,7 +95,7 @@ public class Good {
 		brand_pre_dict_2.add("标牌");
 		brand_pre_dict_2.add("奖牌");
 
-		brand_pre_dict_3 = new HashSet<String>();
+		brand_pre_dict_3 = new HashSet<>();
 		brand_pre_dict_3.add("塑料牌");
 		brand_pre_dict_3.add("指示牌");
 		brand_pre_dict_3.add("标价牌");
@@ -117,7 +117,7 @@ public class Good {
 		this.normalized_string = this.original_string;
 		Set<String> keys = normalizer_map.keySet();
 		for(String key : keys) {
-			this.normalized_string.replaceAll(key, normalizer_map.get(key));
+			this.normalized_string = this.normalized_string.replaceAll(key, normalizer_map.get(key));
 		}
 	}
 	

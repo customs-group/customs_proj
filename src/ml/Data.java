@@ -13,7 +13,7 @@ import java.util.Vector;
 import libsvm.svm_node;
 
 public class Data {
-	public static enum data_type {original, scaled};
+	public enum data_type {original, scaled};
 	
 	private Vector<Double> labels;
 	private Vector<svm_node[]> original_set;
@@ -27,9 +27,9 @@ public class Data {
 	 * initialization
 	 */
 	public Data() {
-		this.labels = new Vector<Double>();
-		this.original_set = new Vector<svm_node[]>();
-		this.scaled_set = new Vector<svm_node[]>();
+		this.labels = new Vector<>();
+		this.original_set = new Vector<>();
+		this.scaled_set = new Vector<>();
 		this.sample_num = 0;
 		this.feature_num = 0;
 		this.scale_upper_bound = 1;
@@ -92,10 +92,10 @@ public class Data {
 				/* set index */
 				sample[i].index = i + 1;
 				/* set value */
-				if (rs.getObject(i + 2).getClass().getName() == "java.lang.String") {
+				if (rs.getObject(i + 2).getClass().getName().equals("java.lang.String")) {
 					sample[i].value = stod(rs.getString(i + 2));
-				} else if ((rs.getObject(i + 2).getClass().getName() == "java.lang.Long")
-						|| (rs.getObject(i + 2).getClass().getName() == "java.math.BigDecimal")) {
+				} else if ((rs.getObject(i + 2).getClass().getName().equals("java.lang.Long"))
+						|| (rs.getObject(i + 2).getClass().getName().equals("java.math.BigDecimal"))) {
 					sample[i].value = rs.getDouble(i + 2);
 				} else {
 					// to be continued
@@ -111,12 +111,8 @@ public class Data {
 	    
 	    /* end data preparation */
         System.out.println("Data preparation done! " + this.get_sample_num() + " samples in total");
-		if (rs != null) {
-			rs.close();
-		}
-		if (pstmt != null) {
-			pstmt.close();
-		}
+		rs.close();
+		pstmt.close();
 	}
 
 	/**
@@ -148,20 +144,20 @@ public class Data {
 		
 	    svm_node[] sample;
 	    for (int i = 0; i < this.sample_num; i++) {
-	    	writer.append(labels.get(i) + " ");
+			writer.append(Double.toString(labels.get(i)));
+			writer.append(" ");
 	    	sample = _set.get(i);
 	    	for (int j = 0; j < this.feature_num; j++) {
-	    		writer.append(sample[j].index + ":" + sample[j].value + " ");
+				writer.append(Integer.toString(sample[j].index));
+				writer.append(":");
+				writer.append(Double.toString(sample[j].value));
+				writer.append(" ");
 	    	}
 	    	writer.append("\n");
 	    }
 	    System.out.println("Data record done! see " + _filename);
-	    if (writer != null) {
-	    	writer.close();
-	    }
-		if (fos != null) {
-			fos.close();
-		}
+		writer.close();
+		fos.close();
 	}
 	
 	

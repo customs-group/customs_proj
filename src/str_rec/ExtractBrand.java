@@ -13,7 +13,7 @@ import java.util.Vector;
 import util.DB_manager;
 
 public class ExtractBrand {
-	public static enum read_type {db, file};
+	public enum read_type {db, file};
 	private static Vector<String[]> goods;
 
 	/**
@@ -37,14 +37,9 @@ public class ExtractBrand {
 				goods.add(good);
 			}
 			// end data preparation
-			if (rs != null) {
-				rs.close();
-			}
-			if (pstmt != null) {
-				pstmt.close();
-			}
+			rs.close();
+			pstmt.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		DB_manager.return_DB_connection(connection);
@@ -58,13 +53,13 @@ public class ExtractBrand {
         try {
 			FileReader file_reader = new FileReader(source_file);
 	    	BufferedReader buffered_reader = new BufferedReader(file_reader);
+
 	    	String _read_result = buffered_reader.readLine();
             while (_read_result != null) {
-            	String[] read_result = new String[5];
+            	String[] read_result;// = new String[5];
             	String[] good = new String[2];
             	System.out.println(_read_result);
             	read_result = _read_result.split("\\t");
-            	System.out.println(read_result);
             	good[0] = read_result[2];
             	good[1] = read_result[3];
             	if (good[1].equals("NULL")) {
@@ -99,7 +94,7 @@ public class ExtractBrand {
 	}
 	
 	public static void main(String[] args) {
-		goods = new Vector<String[]>();
+		goods = new Vector<>();
 		try {
 			read_data(read_type.file);
 			String filename = "./datasets/goods.txt";
@@ -110,23 +105,33 @@ public class ExtractBrand {
 			for(String[] _good : goods) {
 				String g_name = _good[0];
 				String g_model = _good[1];
-				writer.append("g_name: " + g_name + "; g_model: " + g_model + "\n");
+
+				writer.append("g_name: ");
+				writer.append(g_name);
+				writer.append("; g_model: ");
+				writer.append(g_model);
+				writer.append("\n");
+
 				Good good = new Good();
 				good.set_good_by_gname(g_name);
 				good.set_good_by_gmodel(g_model);
 
-				writer.append("品牌: " + good.get_brand() + "\n");
-				writer.append("型号: " + good.get_type() + "\n");
-				writer.append("其他: " + good.get_discription() + "\n");
+				writer.append("品牌: ");
+				writer.append(good.get_brand());
+				writer.append("\n");
+
+				writer.append("型号: ");
+				writer.append(good.get_type());
+				writer.append("\n");
+
+				writer.append("其他: ");
+				writer.append(good.get_discription());
+				writer.append("\n");
 			}
 			System.out.println("Data record done! see \"" + filename + "\"");
 			// end data preparation
-			if (writer != null) {
-		    	writer.close();
-		    }
-			if (fos != null) {
-				fos.close();
-			}
+			writer.close();
+			fos.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

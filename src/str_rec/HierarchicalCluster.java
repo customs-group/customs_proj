@@ -35,11 +35,11 @@ public class HierarchicalCluster {
 		this.distance_matrix = distance_matrix;
 
 		// init tuple list
-		this.tuple_list = new ArrayList<Tuple>();
-		ArrayList<Cluster> cluster_list = new ArrayList<Cluster>();
+		this.tuple_list = new ArrayList<>();
+		ArrayList<Cluster> cluster_list = new ArrayList<>();
 		for(int i = 0; i < original_brands.size(); i++) {
-			ArrayList<String> _brands = new ArrayList<String>();
-			ArrayList<Integer> _brand_count = new ArrayList<Integer>();
+			ArrayList<String> _brands = new ArrayList<>();
+			ArrayList<Integer> _brand_count = new ArrayList<>();
 			_brands.add(original_brands.get(i));
 			_brand_count.add(brand_count.get(i));
 			cluster_list.add(new Cluster(_brands, _brand_count));
@@ -148,9 +148,9 @@ public class HierarchicalCluster {
 		FileWriter file_writer = new FileWriter(matrix_file_name);
         BufferedWriter buffered_writer = new BufferedWriter(file_writer);
         float[][] distance_matrix = this.get_distance_matrix();
-        for (int i = 0; i < distance_matrix.length; i++) {
+        for (float[] row : distance_matrix) {
 			for (int j = 0; j < distance_matrix.length; j ++) {
-				buffered_writer.append(distance_matrix[i][j] + "");
+				buffered_writer.append(Float.toString(row[j]));
 				if (j != distance_matrix.length - 1) {
 					buffered_writer.append(", ");
 				}

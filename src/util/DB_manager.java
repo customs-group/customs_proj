@@ -23,16 +23,18 @@ public class DB_manager {
 	    	String config = buffered_reader.readLine();
 	        while (config != null) {
 	        	String[] result = config.split(": ");
-				if (result[0].equals("DB_CONNECTION")) {
-					DB_CONNECTION = result[1];
-
-				} else if (result[0].equals("DB_USER")) {
-					DB_USER = result[1];
-
-				} else if (result[0].equals("DB_PASSWORD")) {
-					DB_PASSWORD = result[1];
-
-				} else {
+				switch (result[0]) {
+					case "DB_CONNECTION":
+						DB_CONNECTION = result[1];
+						break;
+					case "DB_USER":
+						DB_USER = result[1];
+						break;
+					case "DB_PASSWORD":
+						DB_PASSWORD = result[1];
+						break;
+					default:
+						break;
 				}
 	        	config = buffered_reader.readLine();
 	        }
@@ -47,7 +49,6 @@ public class DB_manager {
 		try {
 			Class.forName(DB_DRIVER);
 			connection = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
-//			return connection;
 		} catch (Exception e) {
 			System.out.println("get db connection failed!");
 			e.printStackTrace();

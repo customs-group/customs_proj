@@ -17,10 +17,10 @@ public class Tuple {
 	 * 因为需要从上一次聚类结果生成新的Tuple, 需要将cluster_list深拷贝一遍
 	 */
 	public Tuple(ArrayList<Cluster> cluster_list) {
-		this.cluster_list = new ArrayList<Cluster>();
+		this.cluster_list = new ArrayList<>();
 		for(Cluster cluster : cluster_list) {
-			ArrayList<String> brands = new ArrayList<String>();
-			ArrayList<Integer> brand_count = new ArrayList<Integer>();
+			ArrayList<String> brands = new ArrayList<>();
+			ArrayList<Integer> brand_count = new ArrayList<>();
 			brands.addAll(cluster.get_brands());
 			brand_count.addAll(cluster.get_brand_count());
 			Cluster new_cluster = new Cluster(brands, brand_count);
@@ -51,11 +51,13 @@ public class Tuple {
 		try {
 			FileWriter file_writer = new FileWriter(clusters_file_name);
 			BufferedWriter buffered_writer = new BufferedWriter(file_writer);
-			buffered_writer.append("total cluster count: " + this.cluster_list.size() + "\n");
-	        for(int i = 0; i < this.cluster_list.size(); i++) {
-	        	Cluster cluster = this.cluster_list.get(i);
-	        	buffered_writer.append(cluster.toString() + "\n");
-	        	buffered_writer.flush();
+			buffered_writer.append("total cluster count: ");
+			buffered_writer.append(Integer.toString(this.cluster_list.size()));
+			buffered_writer.append("\n");
+			for(Cluster cluster : cluster_list) {
+				buffered_writer.append(cluster.toString());
+				buffered_writer.append("\n");
+				buffered_writer.flush();
 			}
 	        buffered_writer.close();
 	        file_writer.close();

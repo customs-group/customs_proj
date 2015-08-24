@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.DoubleSummaryStatistics;
 import java.util.Vector;
 
 import util.DB_manager;
@@ -59,7 +60,7 @@ public class SVM_test {
 	 */
 	public static void svm_test(svm_model model, Data data) {
 		int hit = 0;
-		double hit_rate = 0.0;
+		double hit_rate;
 		Vector<svm_node[]> set = data.get_set(Data.data_type.scaled);
 		Vector<Double> labels = data.get_labels();
 		svm_node[] sample;
@@ -78,9 +79,16 @@ public class SVM_test {
 				sample = set.get(i);
 				real_label = labels.get(i);
 				predict_label = svm.svm_predict(model, sample);
-				writer.append("predict label: " + predict_label + "; real label: " + real_label + " ");
+				writer.append("predict label: ");
+				writer.append(Double.toString(predict_label));
+				writer.append("; real label: ");
+				writer.append(Double.toString(real_label));
+				writer.append(" ");
 				for (int j = 0; j < data.get_feature_num(); j ++) {
-					writer.append(sample[j].index + ":" + sample[j].value + " ");
+					writer.append(Integer.toString(sample[j].index));
+					writer.append(":");
+					writer.append(Double.toString(sample[j].value));
+					writer.append(" ");
 				}
 				writer.append("\n");
 				if (Math.abs(predict_label - real_label) < 0.001) {
@@ -106,7 +114,7 @@ public class SVM_test {
 		String train_limit = "limit 2500";
 		String test_limit = "limit 2500";
 		
-		Vector<String> features = new Vector<String>();
+		Vector<String> features = new Vector<>();
 		features.add("entry_head.special_flag");
 		features.add("entry_head.i_e_flag");
 		features.add("entry_head.decl_port");

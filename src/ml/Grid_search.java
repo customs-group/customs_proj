@@ -97,10 +97,10 @@ public class Grid_search {
 		param.gamma = Math.pow(G_BASE, power_of_g);
 
 		for (int i = 0; i <= fold_n; i++) {
-			Vector<svm_node[]> train_set = new Vector<svm_node[]>();
-			Vector<svm_node[]> valid_set = new Vector<svm_node[]>();
-			Vector<Double> train_labels = new Vector<Double>();
-			Vector<Double> valid_labels = new Vector<Double>();
+			Vector<svm_node[]> train_set = new Vector<>();
+			Vector<svm_node[]> valid_set = new Vector<>();
+			Vector<Double> train_labels = new Vector<>();
+			Vector<Double> valid_labels = new Vector<>();
 			
 			vs_len = set.size() / fold_n;
 			vs_start = i * vs_len;
@@ -152,7 +152,7 @@ public class Grid_search {
         
 		int best_power_of_c = C_START_VALUE;
 		int best_power_of_g = G_START_VALUE;
-		double hit_rate = 0.0;
+		double hit_rate;// = 0.0;
 		double best_hit_rate = 0.0;
 		for (int power_of_c = C_START_VALUE; power_of_c < C_STOP_VALUE; power_of_c += C_STEP) {
 			for (int power_of_g = G_START_VALUE; power_of_g < G_STOP_VALUE; power_of_g += G_STEP) {
@@ -189,7 +189,7 @@ public class Grid_search {
 		String train_query;
 		String limit = "limit 2500";
 		
-		Vector<String> features = new Vector<String>();
+		Vector<String> features = new Vector<>();
 		features.add("entry_head.special_flag");
 		features.add("entry_head.i_e_flag");
 		//features.add("entry_head.decl_port");
