@@ -17,11 +17,11 @@ public class Test {
 	 * @throws Exception
 	 */
 	private static void init(String in) throws Exception {
-        ArrayList<String> total_read_brands = new ArrayList<String>(); // 读取到的所有品牌
-        ArrayList<Integer> total_read_counts = new ArrayList<Integer>(); // 读取到的所有品牌的对应出现次数
+        ArrayList<String> total_read_brands = new ArrayList<>(); // 读取到的所有品牌
+        ArrayList<Integer> total_read_counts = new ArrayList<>(); // 读取到的所有品牌的对应出现次数
         
-		ArrayList<String> initial_brands = new ArrayList<String>(); // 提取一部分品牌用于算法测试
-		ArrayList<Integer> initial_counts = new ArrayList<Integer>(); // 提取出的品牌对应的出现次数
+		ArrayList<String> initial_brands = new ArrayList<>(); // 提取一部分品牌用于算法测试
+		ArrayList<Integer> initial_counts = new ArrayList<>(); // 提取出的品牌对应的出现次数
         
 		LevensteinDistance ld = new LevensteinDistance();
 		

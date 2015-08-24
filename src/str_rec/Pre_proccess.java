@@ -8,15 +8,17 @@ import java.util.*;
 import java.util.Map.Entry;
 
 public class Pre_proccess {
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     private static String in_file = "";
     private static String out_file = "";
-
     private static Map<String, Integer> brand_and_count;
 
     public static void main(String[] args) {
 
-        if (args.length != 2){
+        if (args.length != 2) {
             System.err.println("Error:: Missing parameters!");
             System.err.println("PreProcess: InputFile OutputFile");
             return;
@@ -28,12 +30,11 @@ public class Pre_proccess {
             FileReader file_reader = new FileReader(in_file);
             BufferedReader buffered_reader = new BufferedReader(file_reader);
 
-            brand_and_count = new HashMap<String, Integer>();
+            brand_and_count = new HashMap<>();
 
             String read_result = buffered_reader.readLine();
 
             while (read_result != null) {
-
                 if (!read_result.equals("@@")) {
                     String[] result = read_result.split("@@");
                     String key = result[0];
@@ -46,7 +47,12 @@ public class Pre_proccess {
                     }
                 } else {
                     System.out.println(read_result);
+<<<<<<< Updated upstream
 //                    return;
+=======
+                    buffered_reader.close();
+                    return;
+>>>>>>> Stashed changes
                 }
                 read_result = buffered_reader.readLine();
             }
