@@ -19,7 +19,7 @@ public class Pre_proccess {
         try {
             String in_file = args[0];
             String out_file = args[1];
-            Map<String, Integer> brand_and_count = new HashMap<>();
+            Map<String, Integer> brand_and_count = new HashMap();
 
             FileReader file_reader = new FileReader(in_file);
             BufferedReader buffered_reader = new BufferedReader(file_reader);
