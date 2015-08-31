@@ -116,7 +116,7 @@ public class Good {
 	private void normalize_symbol() {
 		this.normalized_string = this.original_string;
 		Set<String> keys = normalizer_map.keySet();
-		for(String key : keys) {
+		for (String key : keys) {
 			this.normalized_string = this.normalized_string.replaceAll(key, normalizer_map.get(key));
 		}
 	}
