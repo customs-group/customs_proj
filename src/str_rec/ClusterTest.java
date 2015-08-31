@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-public class Test {
+public class ClusterTest {
 	private static final String brands_file_name = "/Users/LU/Downloads/ALL_CODE/tar";
 	private static final String matrix_file_name = "/Users/LU/Downloads/ALL_CODE/matrix";
 	private static final String clusters_file_name = "/Users/LU/Downloads/ALL_CODE/clusters";
@@ -60,7 +60,7 @@ public class Test {
 
 		if (args.length != 3) {
 			System.err.println("Error:: Missing parameters!");
-			System.err.println("Test: brands_file_name cluster_file_name matrix_file_name");
+			System.err.println("ClusterTest: brands_file_name cluster_file_name matrix_file_name");
 			return;
 		}
 		try {
