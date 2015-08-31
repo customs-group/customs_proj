@@ -40,7 +40,9 @@ public class Cluster {
 	 */
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append("{");
+		result.append("{[");
+		result.append(this.brands.size());
+		result.append("]; ");
 		for(int i = 0; i < this.brands.size(); i++) {
 			result.append(this.brands.get(i));
 			result.append(": ");
