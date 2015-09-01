@@ -1,11 +1,13 @@
 package str_rec;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Cluster类，表示一个聚类
  */
 public class Cluster {
+	private HashSet<String> id_set;
 	private ArrayList<String> brands; // Cluster中的元素
 	private ArrayList<Integer> brand_count; // 各个元素的数量
 	private int total_count; // 所有元素总数量
