@@ -1,28 +1,24 @@
 package str_rec;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Cluster类，表示一个聚类
  */
 public class Cluster {
-	private HashSet<String> id_set;
-	private ArrayList<String> brands; // Cluster中的元素
-	private ArrayList<Integer> brand_count; // 各个元素的数量
-	private int total_count; // 所有元素总数量
+	private String label;
+	private Integer brands_count;
+	private LinkedHashMap<String, HashSet<Pair>> brand_to_id;
 	
 	/**
 	 * 初始化cluster
-	 * @param brands cluster内包含的品牌
-	 * @param brand_count cluster内所包含的品牌对应出现的次数
+	 * @param brand_to_id brand ＝ set<entry_id:g_no对>
 	 */
-	public Cluster(ArrayList<String> brands, ArrayList<Integer> brand_count) {
-		this.brands = brands;
-		this.brand_count = brand_count;
-		this.total_count = 0;
-		for (Integer i : brand_count) {
-			this.total_count += i;
+	public Cluster(LinkedHashMap<String, HashSet<Pair>> brand_to_id) {
+		this.brand_to_id = brand_to_id;
+		this.brands_count = 0;
+		for (HashSet<Pair> id_set : this.brand_to_id.values()) {
+			this.brands_count += id_set.size();
 		}
 	}
 	
@@ -31,10 +27,10 @@ public class Cluster {
 	 * @param another_cluster 被合并的cluster
 	 */
 	public void Union(Cluster another_cluster) {
-		this.brands.addAll(another_cluster.brands);
-		this.brand_count.addAll(another_cluster.brand_count);
-		this.total_count += another_cluster.total_count;
-		another_cluster = null;
+		for (Map.Entry<String, HashSet<Pair>> entry : another_cluster.brand_to_id.entrySet()) {
+			this.brand_to_id.put(entry.getKey(), entry.getValue());
+			this.brands_count += entry.getValue().size();
+		}
 	}
 
 	/**
@@ -42,14 +38,25 @@ public class Cluster {
 	 */
 	public String toString() {
 		StringBuilder result = new StringBuilder();
-		result.append("{[");
-		result.append(this.brands.size());
-		result.append("]; ");
-		for(int i = 0; i < this.brands.size(); i++) {
-			result.append(this.brands.get(i));
+		result.append("{label: ");
+		result.append(this.label);
+		result.append("; ");
+
+		Iterator<Map.Entry<String, HashSet<Pair>>> brand_to_id_iter = this.brand_to_id.entrySet().iterator();
+		while (brand_to_id_iter.hasNext()) {
+			Map.Entry<String, HashSet<Pair>> entry = brand_to_id_iter.next();
+			result.append("[");
+			result.append(entry.getKey());
 			result.append(": ");
-			result.append(this.brand_count.get(i));
-			if(i != this.brands.size() - 1) {
+			Iterator<Pair> id_set_iter = entry.getValue().iterator();
+			while (id_set_iter.hasNext()) {
+				result.append(id_set_iter.next().toString());
+				if (id_set_iter.hasNext()) {
+					result.append(", ");
+				}
+			}
+			result.append("]");
+			if (brand_to_id_iter.hasNext()) {
 				result.append(", ");
 			}
 		}
@@ -57,15 +64,14 @@ public class Cluster {
 		return result.toString();
 	}
 	
-	/** set/get methods */
-	public ArrayList<String> get_brands() {
-		return this.brands;
+	/** get/set methods */
+	public void set_label (String label) {
+		this.label = label;
 	}
-	public ArrayList<Integer> get_brand_count() {
-		return this.brand_count;
+	public Integer get_brands_count () {
+		return this.brands_count;
 	}
-	public int get_total_count() {
-		return this.total_count;
+	public LinkedHashMap<String, HashSet<Pair>> get_brand_to_id () {
+		return this.brand_to_id;
 	}
-	
 }

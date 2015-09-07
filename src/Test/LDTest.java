@@ -1,8 +1,10 @@
-package bak;
+package Test;
+
+import util.LevensteinDistance;
 
 import java.util.List;
 
-public class Test3 {
+public class LDTest {
 
 	public static void main(String[] args) {
 		String content1 = "品牌:FK 适用于各类轿车 副厂件 MF51";

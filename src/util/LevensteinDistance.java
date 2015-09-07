@@ -1,4 +1,4 @@
-package str_rec;
+package util;
 
 public final class LevensteinDistance {  
 	   
@@ -12,11 +12,11 @@ public final class LevensteinDistance {
       char[] sa;
       int n;
       int p[];
-      //'previous' cost array, horizontally
+      // 'previous' cost array, horizontally
       int d[];
       // cost array, horizontally
       int _d[];
-      //placeholder to assist in swapping p and d
+      // placeholder to assist in swapping p and d
       sa = target.toCharArray();
       n = sa.length;
       p = new int[n+1];

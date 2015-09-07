@@ -13,17 +13,22 @@ public class Tuple {
 	
 	/**
 	 * 初始化Tuple
-	 * @param cluster_list 上一次聚类的结果
+	 * @param previous_cluster_list 上一次聚类的结果
 	 * 因为需要从上一次聚类结果生成新的Tuple, 需要将cluster_list深拷贝一遍
 	 */
-	public Tuple(ArrayList<Cluster> cluster_list) {
+	public Tuple(ArrayList<Cluster> previous_cluster_list) {
 		this.cluster_list = new ArrayList<>();
-		for(Cluster cluster : cluster_list) {
-			ArrayList<String> brands = new ArrayList<>();
-			ArrayList<Integer> brand_count = new ArrayList<>();
-			brands.addAll(cluster.get_brands());
-			brand_count.addAll(cluster.get_brand_count());
-			Cluster new_cluster = new Cluster(brands, brand_count);
+		for (Cluster cluster : previous_cluster_list) {
+			LinkedHashMap<String, HashSet<Pair>> brand_to_id = new LinkedHashMap<>();
+			for (Map.Entry<String, HashSet<Pair>> entry : cluster.get_brand_to_id().entrySet()) {
+				HashSet<Pair> id_set = new HashSet<>();
+				for (Pair pair : entry.getValue()) {
+					Pair _pair = new Pair(pair.get_entry_id(), pair.get_g_no());
+					id_set.add(_pair);
+				}
+				brand_to_id.put(entry.getKey(), id_set);
+			}
+			Cluster new_cluster = new Cluster(brand_to_id);
 			this.cluster_list.add(new_cluster);
 		}
 	}
@@ -34,22 +39,21 @@ public class Tuple {
 	 * @param cluster2_index 被合并的cluster的索引
 	 */
 	public void Union(int cluster1_index, int cluster2_index) {
-		if(cluster1_index == cluster2_index) {
+		if (cluster1_index == cluster2_index) {
 			System.out.println("same cluster, doing nothing");
-			return;
+		} else {
+			this.cluster_list.get(cluster1_index).Union(this.cluster_list.get(cluster2_index));
+			this.cluster_list.remove(cluster2_index); // 移除被合并的Cluster
 		}
-		this.cluster_list.get(cluster1_index).Union(this.cluster_list.get(cluster2_index));
-		// 移除被合并的Cluster
-		this.cluster_list.remove(cluster2_index);
     }
 	
 	/**
 	 * 将结果记录到文件
-	 * @param clusters_file_name 输出文件名
+	 * @param clusters_file 输出文件名
 	 */
-	public void record(String clusters_file_name) {
+	public void record(String clusters_file) {
 		try {
-			FileWriter file_writer = new FileWriter(clusters_file_name);
+			FileWriter file_writer = new FileWriter(clusters_file);
 			BufferedWriter buffered_writer = new BufferedWriter(file_writer);
 			buffered_writer.append("total cluster count: ");
 			buffered_writer.append(Integer.toString(this.cluster_list.size()));
