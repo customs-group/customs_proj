@@ -217,7 +217,7 @@ public class HierarchicalCluster {
 				break;
 			default:
 				System.err.println("Error: parameters error!");
-				System.err.println("Usage: Preprocess [InputFile] [OutputFile]");
+				System.err.println("Usage: HierarchicalCluster [InputFile] [MatrixFile] [clustersFile]");
 				return;
 		}
 		try {
