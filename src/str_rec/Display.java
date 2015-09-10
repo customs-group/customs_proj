@@ -15,9 +15,9 @@ public class Display {
         with_description,
         without_description
     }
-    private static final String original_file_name = "datasets/original/end";
-    private static final String display_file_name = "datasets/display";
-    private static final String status_file_name = "datasets/status";
+    private static String original_file = "datasets/original/end";
+    private static String display_file = "datasets/display";
+    private static String status_file = "datasets/status";
 
     private static HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashSet<String>>>>> code_to_name;
     private static HashMap<String, HashMap<String, HashMap<String, HashSet<String>>>> name_to_country;
@@ -188,25 +188,16 @@ public class Display {
         file_writer.close();
     }
 
-    public static void main(String[] args) {
-        String original_file;
-        String display_file;
-        String status_file;
+    private static void check_args(String[] args) {
         switch (args.length) {
             case 0:
-                original_file = original_file_name;
-                display_file = display_file_name;
-                status_file = status_file_name;
                 break;
             case 1:
                 original_file = args[0];
-                display_file = display_file_name;
-                status_file = status_file_name;
                 break;
             case 2:
                 original_file = args[0];
                 display_file = args[1];
-                status_file = status_file_name;
                 break;
             case 3:
                 original_file = args[0];
@@ -216,8 +207,12 @@ public class Display {
             default:
                 System.err.println("Error: parameters error!");
                 System.err.println("Usage: Display [InputFile] [DisplayFile] [StatusFile]");
-                return;
+                System.exit(0);
         }
+    }
+
+    public static void main(String[] args) {
+        check_args(args);
         try {
             read_from_file(original_file);
             record_status(status_file);

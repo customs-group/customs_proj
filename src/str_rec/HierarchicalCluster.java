@@ -11,11 +11,11 @@ import java.util.*;
 public class HierarchicalCluster {
 	private static Tuple tuple; // 保存每次cluster结果集
 	private static float[][] distance_matrix; // 相似度矩阵计算结果
-	private static final Float threshold = 0.6f; // (0.0 ~ 1.0)
-	private static final Float scaling = 1.0f; // (0.0 ~ 1.0]
-	private static final String original_file_name = "./datasets/original/end_aa";
-	private static final String matrix_file_name = "./datasets/brands_with_counts";
-	private static final String clusters_file_name = "./datasets/clusters";
+	private static Float threshold = 0.6f; // (0.0 ~ 1.0)
+	private static Float scaling = 1.0f; // (0.0 ~ 1.0]
+	private static String original_file = "./datasets/original/end_aa";
+	private static String matrix_file = "./datasets/brands_with_counts";
+	private static String clusters_file = "./datasets/clusters";
 
 	/**
 	 * algorithm initialization
@@ -190,25 +190,16 @@ public class HierarchicalCluster {
         file_writer.close();
 	}
 
-	public static void main(String[] args) {
-		String original_file;
-		String matrix_file;
-		String clusters_file;
+	private static void check_args(String[] args) {
 		switch (args.length) {
 			case 0:
-				original_file = original_file_name;
-				matrix_file = matrix_file_name;
-				clusters_file = clusters_file_name;
 				break;
 			case 1:
 				original_file = args[0];
-				matrix_file = matrix_file_name;
-				clusters_file = clusters_file_name;
 				break;
 			case 2:
 				original_file = args[0];
 				matrix_file = args[1];
-				clusters_file = clusters_file_name;
 				break;
 			case 3:
 				original_file = args[0];
@@ -218,8 +209,19 @@ public class HierarchicalCluster {
 			default:
 				System.err.println("Error: parameters error!");
 				System.err.println("Usage: HierarchicalCluster [InputFile] [MatrixFile] [clustersFile]");
-				return;
+				System.exit(0);
 		}
+	}
+
+	public static void set_threshold(Float _threshold) {
+		threshold = _threshold;
+	}
+	public static void set_scaling(Float _scaling) {
+		scaling = _scaling;
+	}
+
+	public static void main(String[] args) {
+		check_args(args);
 		try {
 			init(original_file);
 			do_clustering();
