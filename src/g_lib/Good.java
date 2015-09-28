@@ -1,4 +1,4 @@
-package str_rec;
+package g_lib;
 
 import java.util.HashMap;
 import java.util.HashSet;

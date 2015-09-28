@@ -1,4 +1,4 @@
-package str_rec;
+package g_lib;
 
 import java.io.BufferedReader;
 import java.io.File;

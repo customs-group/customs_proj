@@ -1,4 +1,6 @@
-package str_rec;
+package bak;
+
+import bak.Display_item;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

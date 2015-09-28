@@ -1,4 +1,4 @@
-package str_rec;
+package g_lib;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -10,24 +10,28 @@ import java.util.stream.Collectors;
 /**
  * Created by edwardlol on 15/9/1.
  */
-public class Display {
+public class Gen_lib {
     private enum record_type {
         with_description,
         without_description
     }
     private static String original_file = "datasets/original/end";
-    private static String display_file = "datasets/display";
+    private static String display_file = "datasets/goods_lib";
     private static String status_file = "datasets/status";
 
-    private static HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashSet<String>>>>> code_to_name;
-    private static HashMap<String, HashMap<String, HashMap<String, HashSet<String>>>> name_to_country;
-    private static HashMap<String, HashMap<String, HashSet<String>>> country_to_brand;
-    private static HashMap<String, HashSet<String>> brand_to_desc;
-    private static HashSet<String> descriptions;
+    private static HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, Integer>>>>> code_to_name;
+    private static HashMap<String, HashMap<String, HashMap<String, HashMap<String, Integer>>>> name_to_country;
+    private static HashMap<String, HashMap<String, HashMap<String, Integer>>> country_to_brand;
+    private static HashMap<String, HashMap<String, Integer>> brand_to_desc;
+    private static HashMap<String, Integer> desc_to_cnt;
 
+    /**
+     *
+     * @param file_name original file
+     * @throws Exception
+     */
     private static void read_from_file(String file_name) throws Exception {
         code_to_name = new HashMap<>();
-
         FileReader file_reader = new FileReader(file_name);
         BufferedReader buffered_reader = new BufferedReader(file_reader);
         String read_result = buffered_reader.readLine();
@@ -56,28 +60,31 @@ public class Display {
                         if (country_to_brand.containsKey(origin_country)) {
                             brand_to_desc = country_to_brand.get(origin_country);
                             if (brand_to_desc.containsKey(brand)) {
-                                descriptions = brand_to_desc.get(brand);
-                                if (!descriptions.contains(description)) {
-                                    descriptions.add(description);
+                                desc_to_cnt = brand_to_desc.get(brand);
+                                if (desc_to_cnt.containsKey(description)) {
+                                    Integer count = desc_to_cnt.get(description) + 1;
+                                    desc_to_cnt.put(description, count);
+                                } else {
+                                    desc_to_cnt.put(description, 1);
                                 }
                             } else {
-                                descriptions = new HashSet<>();
-                                descriptions.add(description);
-                                brand_to_desc.put(brand, descriptions);
+                                desc_to_cnt = new HashMap<>();
+                                desc_to_cnt.put(description, 1);
+                                brand_to_desc.put(brand, desc_to_cnt);
                             }
                         } else {
                             brand_to_desc = new HashMap<>();
-                            descriptions = new HashSet<>();
-                            descriptions.add(description);
-                            brand_to_desc.put(brand, descriptions);
+                            desc_to_cnt = new HashMap<>();
+                            desc_to_cnt.put(description, 1);
+                            brand_to_desc.put(brand, desc_to_cnt);
                             country_to_brand.put(origin_country, brand_to_desc);
                         }
                     } else {
                         country_to_brand = new HashMap<>();
                         brand_to_desc = new HashMap<>();
-                        descriptions = new HashSet<>();
-                        descriptions.add(description);
-                        brand_to_desc.put(brand, descriptions);
+                        desc_to_cnt = new HashMap<>();
+                        desc_to_cnt.put(description, 1);
+                        brand_to_desc.put(brand, desc_to_cnt);
                         country_to_brand.put(origin_country, brand_to_desc);
                         name_to_country.put(g_name, country_to_brand);
                     }
@@ -85,9 +92,9 @@ public class Display {
                     name_to_country = new HashMap<>();
                     country_to_brand = new HashMap<>();
                     brand_to_desc = new HashMap<>();
-                    descriptions = new HashSet<>();
-                    descriptions.add(description);
-                    brand_to_desc.put(brand, descriptions);
+                    desc_to_cnt = new HashMap<>();
+                    desc_to_cnt.put(description, 1);
+                    brand_to_desc.put(brand, desc_to_cnt);
                     country_to_brand.put(origin_country, brand_to_desc);
                     name_to_country.put(g_name, country_to_brand);
                     code_to_name.put(code_ts, name_to_country);
@@ -99,6 +106,11 @@ public class Display {
         file_reader.close();
     }
 
+    /**
+     *
+     * @param file_name status file
+     * @throws Exception
+     */
     private static void record_status(String file_name) throws Exception{
         FileWriter file_writer = new FileWriter(file_name);
         BufferedWriter buffered_writer = new BufferedWriter(file_writer);
@@ -120,7 +132,13 @@ public class Display {
                 for (String key3 : keys3) {
                     brand_to_desc = country_to_brand.get(key3);
                     Set<String> keys4 = brand_to_desc.keySet();
-                    Goods_Count += keys4.size();
+                    for (String key4 : keys4) {
+                        desc_to_cnt = brand_to_desc.get(key4);
+                        Set<String> keys5 = desc_to_cnt.keySet();
+                        for (String key5 : keys5) {
+                            Goods_Count += desc_to_cnt.get(key5);
+                        }
+                    }
                 }
             }
             buffered_writer.append("-- count of code_ts ");
@@ -133,6 +151,12 @@ public class Display {
         file_writer.close();
     }
 
+    /**
+     *
+     * @param file_name display file
+     * @param type with or without description
+     * @throws Exception
+     */
     private static void record(String file_name, record_type type) throws Exception {
         FileWriter file_writer = new FileWriter(file_name);
         BufferedWriter buffered_writer = new BufferedWriter(file_writer);
@@ -149,8 +173,11 @@ public class Display {
                     brand_to_desc = country_to_brand.get(origin_country);
                     Set<String> brands = brand_to_desc.keySet();
                     for (String brand : brands) {
+                        desc_to_cnt = brand_to_desc.get(brand);
+                        Set<String> descriptions = desc_to_cnt.keySet();
                         switch (type) {
                             case without_description:
+                                Integer count = 0;
                                 buffered_writer.append(code_ts);
                                 buffered_writer.append("\t");
                                 buffered_writer.append(g_name);
@@ -158,11 +185,15 @@ public class Display {
                                 buffered_writer.append(origin_country);
                                 buffered_writer.append("\t");
                                 buffered_writer.append(brand);
+                                buffered_writer.append("\t");
+                                for (String description : descriptions) {
+                                    count += desc_to_cnt.get(description);
+                                }
+                                buffered_writer.append(count.toString());
                                 buffered_writer.append("\n");
                                 buffered_writer.flush();
                                 break;
                             case with_description:
-                                descriptions = brand_to_desc.get(brand);
                                 for (String description : descriptions) {
                                     buffered_writer.append(code_ts);
                                     buffered_writer.append("\t");
@@ -173,6 +204,8 @@ public class Display {
                                     buffered_writer.append(brand);
                                     buffered_writer.append("\t");
                                     buffered_writer.append(description);
+                                    buffered_writer.append("\t");
+                                    buffered_writer.append(desc_to_cnt.get(description).toString());
                                     buffered_writer.append("\n");
                                     buffered_writer.flush();
                                 }
@@ -188,6 +221,10 @@ public class Display {
         file_writer.close();
     }
 
+    /**
+     *
+     * @param args [InputFile] [DisplayFile] [StatusFile]
+     */
     private static void check_args(String[] args) {
         switch (args.length) {
             case 0:
@@ -206,7 +243,7 @@ public class Display {
                 break;
             default:
                 System.err.println("Error: parameters error!");
-                System.err.println("Usage: Display [InputFile] [DisplayFile] [StatusFile]");
+                System.err.println("Usage: Gen_lib [InputFile] [DisplayFile] [StatusFile]");
                 System.exit(0);
         }
     }

@@ -1,48 +1,49 @@
 package Test;
 
-import str_rec.Pair;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by edwardlol on 15/9/6.
  */
 public class MapTest {
     public static void main(String[] args) {
-        LinkedHashMap<String, HashSet<Pair>> map = new LinkedHashMap<>();
-        Pair pair1 = new Pair("id1", "n1");
-        Pair pair2 = new Pair("id2", "n2");
-        Pair pair3 = new Pair("id3", "n3");
-        Pair pair4 = new Pair("id4", "n4");
-        HashSet<Pair> pairs1 = new HashSet<>();
-        pairs1.add(pair1);
-        pairs1.add(pair2);
-        HashSet<Pair> pairs2 = new HashSet<>();
-        pairs2.add(pair3);
-        HashSet<Pair> pairs3 = new HashSet<>();
-        pairs3.add(pair4);
-        map.put("brand1", pairs1);
-        //map.put("brand2", pairs2);
-        //map.put("brand3", pairs3);
+        HashMap<String, HashMap<String, Integer>> brand_to_id = new HashMap<>();
+        HashMap<String, Integer> id_map1 = new HashMap<>();
+        HashMap<String, Integer> id_map2 = new HashMap<>();
+        HashMap<String, Integer> id_map3 = new HashMap<>();
+        id_map1.put("accord", 1);
+        id_map1.put("civic", 2);
+        id_map2.put("s3", 3);
+        id_map2.put("m4", 4);
+        id_map2.put("m6", 5);
+        id_map3.put("amg c63", 6);
+        id_map3.put("slk 200", 7);
+        brand_to_id.put("honda", id_map1);
+        brand_to_id.put("bmw", id_map2);
+        brand_to_id.put("benz", id_map3);
 
-        String out = map.keySet().toString();
-        List<String> l = new ArrayList<>(map.keySet());
-        System.out.println(l.get(0));
+        String max_brand = "";
+        int max_count = 0;
+/*
+        int m_count = brand_to_id.entrySet().stream().mapToInt(brand_entry -> {
+            String brand = brand_entry.getKey();
+            HashMap<String, Integer> id_map = brand_entry.getValue();
+            int count = id_map.entrySet().stream().mapToInt(HashMap.Entry::getValue).sum();
+            return count;
+        });
+*/
+        for (Map.Entry<String, HashMap<String, Integer>> brand_entry : brand_to_id.entrySet()) {
+            String brand = brand_entry.getKey();
+            HashMap<String, Integer> id_map = brand_entry.getValue();
 
-        Iterator<Map.Entry<String, HashSet<Pair>>> it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, HashSet<Pair>> entry = it.next();
-            System.out.print(entry.getKey() + ": ");
-            Iterator<Pair> it2 = entry.getValue().iterator();
-            while (it2.hasNext()) {
-                System.out.print(it2.next().toString());
-                if (it2.hasNext()) {
-                    System.out.print(", ");
-                }
-            }
-            if (it.hasNext()) {
-                System.out.print(", ");
+            int count = id_map.entrySet().stream().mapToInt(HashMap.Entry::getValue).sum();
+            if (count > max_count) {
+                max_brand = brand;
+                max_count = count;
             }
         }
+        System.out.print(max_brand + ": " + max_count);
+
     }
 }

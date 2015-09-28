@@ -1,4 +1,4 @@
-package str_rec;
+package g_lib;
 
 import util.LevensteinDistance;
 
@@ -9,69 +9,96 @@ import java.util.*;
  * 层次聚类
  */
 public class HierarchicalCluster {
-	private static Tuple tuple; // 保存每次cluster结果集
+	private static ArrayList<Cluster> cluster_list;
 	private static float[][] distance_matrix; // 相似度矩阵计算结果
 	private static Float threshold = 0.6f; // (0.0 ~ 1.0)
-	private static Float scaling = 1.0f; // (0.0 ~ 1.0]
-	private static String original_file = "./datasets/original/end_aa";
-	private static String matrix_file = "./datasets/brands_with_counts";
-	private static String clusters_file = "./datasets/clusters";
+	private static Float scaling = 0.5f; // (0.0 ~ 1.0]
+	private static String original_file = "datasets/goods_lib";
+	private static String matrix_file = "datasets/matrix";
+	private static String clusters_file = "datasets/clusters";
 
 	/**
 	 * algorithm initialization
 	 * @throws Exception
 	 */
 	private static void init(String original_file) throws Exception {
-		LinkedHashMap<String, HashSet<Pair>> brand_to_id = new LinkedHashMap<>();
-		LevensteinDistance ld = new LevensteinDistance();
-
+		LinkedHashMap<String, HashMap<String, Integer>> brands_map = new LinkedHashMap<>();
 		// step1: read hashmap from file
+		System.out.println("reading data from file!");
 		FileReader file_reader = new FileReader(original_file);
 		BufferedReader buffered_reader = new BufferedReader(file_reader);
 		String read_result = buffered_reader.readLine();
 		while (read_result != null) {
 			String[] result = read_result.split("\\t");
-			String[] good_info = result[5].split("@@");
-			String brand = good_info[0];
-			String entry_id = result[0];
-			String g_no = result[1];
-
-			Pair pair = new Pair(entry_id, g_no);
-			if (brand_to_id.containsKey(brand)) {
-				brand_to_id.get(brand).add(pair);
+			String code_ts = result[0];
+			String g_name = result[1];
+			String brand = result[3];
+			Integer count = 0;
+			if (result.length == 5) {
+				count = Integer.parseInt(result[4]);
+			} else if (result.length == 6) {
+				count = Integer.parseInt(result[5]);
 			} else {
-				HashSet<Pair> id_set = new HashSet<>();
-				id_set.add(pair);
-				brand_to_id.put(brand, id_set);
+				System.out.println("data format error! check your original file!");
+				System.exit(0);
+			}
+
+			String id = code_ts + ":::" + g_name;
+			if (brands_map.containsKey(brand)) {
+				HashMap<String, Integer> id_map = brands_map.get(brand);
+				if (id_map.containsKey(id)) {
+					count += id_map.get(id);
+				}
+				id_map.put(id, count);
+			} else {
+				HashMap<String, Integer> id_map = new HashMap<>();
+				id_map.put(id, count);
+				brands_map.put(brand, id_map);
 			}
 			read_result = buffered_reader.readLine();
 		}
 		buffered_reader.close();
 		file_reader.close();
-		System.out.println("file read done! data in memory now");
+		System.out.println("file reading done! all data in memory now");
+		System.out.println("map size: " + brands_map.size());
 
 		// step2: init tuple list
-		ArrayList<Cluster> cluster_list = new ArrayList<>();
-		for (Map.Entry<String, HashSet<Pair>> entry : brand_to_id.entrySet()) {
-			LinkedHashMap<String, HashSet<Pair>> _brand_to_id = new LinkedHashMap<>();
-			_brand_to_id.put(entry.getKey(), entry.getValue());
-			cluster_list.add(new Cluster(_brand_to_id));
+		System.out.println("initializing tuple");
+		cluster_list = new ArrayList<>();
+		brands_map.entrySet().stream().forEach(entry -> {
+			LinkedHashMap<String, HashMap<String, Integer>> _brand_map = new LinkedHashMap<>();
+			_brand_map.put(entry.getKey(), entry.getValue());
+			cluster_list.add(new Cluster(_brand_map));
+		});
+/*
+		for (Map.Entry<String, HashMap<String, Integer>> entry : brands_map.entrySet()) {
+			LinkedHashMap<String, HashMap<String, Integer>> _brand_map = new LinkedHashMap<>();
+			_brand_map.put(entry.getKey(), entry.getValue());
+			cluster_list.add(new Cluster(_brand_map));
 		}
+*/
 		Float temp = cluster_list.size() * scaling;
 		Integer end_index = temp.intValue();
 		cluster_list = new ArrayList<>(cluster_list.subList(0, end_index));
-		tuple = new Tuple(cluster_list);
 
 		// step3: init distance matrix
+		System.out.println("initializing matrix");
+		LevensteinDistance ld = new LevensteinDistance();
 		ArrayList<String> brand_list = new ArrayList<>();
-		for (Cluster cluster : tuple.get_cluster_list()) {
+		cluster_list.stream().forEach(cluster -> {
+			List<String> list = new ArrayList<>(cluster.get_brand_to_id().keySet());
+			brand_list.add(list.get(0)); // 初始每个cluster只有一个brand
+		});
+/*
+		for (Cluster cluster : cluster_list) {
 			List<String> list = new ArrayList<>(cluster.get_brand_to_id().keySet());
 			brand_list.add(list.get(0)); // 初始每个cluster只有一个brand
 		}
+*/
 		distance_matrix = new float[brand_list.size()][brand_list.size()];
 		for (int i = 0; i < brand_list.size(); i++) {
 			for (int j = i + 1; j < brand_list.size(); j ++) {
-				distance_matrix[i][j] = ld.getDistance(brand_list.get(i), brand_list.get(j));
+				distance_matrix[i][j] = ld.getDistance(brand_list.get(i).toLowerCase(), brand_list.get(j).toLowerCase());
 			}
 		}
 		for (int j = 0; j < brand_list.size(); j++) {
@@ -80,7 +107,7 @@ public class HierarchicalCluster {
 			}
 		}
 		// end initialization
-		System.out.println("initialized!");
+		System.out.println("initializing done!");
 	}
 
 	/**
@@ -102,12 +129,14 @@ public class HierarchicalCluster {
 			}
 			if (max_similarity < threshold) {
 				System.out.println("clustering done! max similarity: " + max_similarity + ", matrix size: " + distance_matrix.length);
+				cluster_list.stream().forEach(Cluster::auto_set_label);
 				break;
 			}
 			// step2: update distance matrix
 			update_matrix(max_i, max_j);
 			// step3: update tuple
-			tuple.Union(max_i, max_j);
+			cluster_list.get(max_i).Union(cluster_list.get(max_j));
+			cluster_list.remove(max_j); // 移除被合并的Cluster
 		}
 	}
 	
@@ -118,8 +147,8 @@ public class HierarchicalCluster {
 	 */
 	private static void update_matrix(int index_i, int index_j) {
 		// 遍历更新距离矩阵右上角
-		int cluster_num_i = tuple.get_cluster_list().get(index_i).get_brands_count();
-		int cluster_num_j = tuple.get_cluster_list().get(index_j).get_brands_count();
+		int cluster_num_i = cluster_list.get(index_i).get_total_count();
+		int cluster_num_j = cluster_list.get(index_j).get_total_count();
 		float[][] _distance_matrix = new float[distance_matrix.length - 1][distance_matrix.length - 1];
 		for (int i = 0; i < _distance_matrix.length; i++) {
 			for (int j = 0; j < _distance_matrix.length; j++) {
@@ -166,14 +195,37 @@ public class HierarchicalCluster {
 		distance_matrix = _distance_matrix;
 	}
 
+
+	private static void record_clusters(String clusters_file) throws Exception {
+		FileWriter file_writer = new FileWriter(clusters_file);
+		BufferedWriter buffered_writer = new BufferedWriter(file_writer);
+		buffered_writer.append("total cluster count: ");
+		buffered_writer.append(Integer.toString(cluster_list.size()));
+		buffered_writer.append("\n");
+/*
+		cluster_list.stream().forEach(cluster -> {
+			try {
+				buffered_writer.append(cluster.toString());
+				buffered_writer.append("\n");
+				buffered_writer.flush();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+*/
+		for (Cluster cluster : cluster_list) {
+			buffered_writer.append(cluster.toString());
+			buffered_writer.append("\n");
+			buffered_writer.flush();
+		}
+		buffered_writer.close();
+		file_writer.close();
+	}
 	/**
 	 * 纪录cluster结果和距离矩阵
-	 * @throws IOException 
+	 * @throws IOException
 	 */
-	public static void record_result(String clusters_file, String matrix_file) throws IOException {
-		// record clusters
-		tuple.record(clusters_file);
-		// record distance matrix
+	public static void record_matrix(String matrix_file) throws IOException {
 		FileWriter file_writer = new FileWriter(matrix_file);
         BufferedWriter buffered_writer = new BufferedWriter(file_writer);
         for (float[] row : distance_matrix) {
@@ -190,6 +242,10 @@ public class HierarchicalCluster {
         file_writer.close();
 	}
 
+	/**
+	 *
+	 * @param args [InputFile] [MatrixFile] [clustersFile]
+	 */
 	private static void check_args(String[] args) {
 		switch (args.length) {
 			case 0:
@@ -225,7 +281,8 @@ public class HierarchicalCluster {
 		try {
 			init(original_file);
 			do_clustering();
-			record_result(clusters_file, matrix_file);
+			record_clusters(clusters_file);
+			record_matrix(matrix_file);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

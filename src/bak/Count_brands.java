@@ -1,4 +1,4 @@
-package str_rec;
+package bak;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
