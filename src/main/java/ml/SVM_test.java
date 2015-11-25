@@ -17,7 +17,7 @@ public class SVM_test {
 	 * @return model
 	 */
 	public static svm_model svm_train(Data data) throws IOException {
-		String model_file_name = "./datasets/model";
+		String model_file_name = "./datasets/svm/model";
 		svm_model model;
 		
 		/* set svm problem */
@@ -71,7 +71,7 @@ public class SVM_test {
 			Date now = new Date();
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_hh:mm:ss");
 			String suffix = dateFormat.format(now);
-			File file = new File("./datasets/result_" + suffix + ".log");
+			File file = new File("./datasets/svm/result_" + suffix + ".log");
 			FileOutputStream fos = new FileOutputStream(file);
 			OutputStreamWriter writer = new OutputStreamWriter(fos, "UTF-8");
 			
@@ -167,6 +167,8 @@ public class SVM_test {
 			/* read data */
 			train_data.read_data(connection, train_query);
 			test_data.read_data(connection, test_query);
+//			train_data.read_data_from_file("./datasets/svm/train", train_query);
+//			test_data.read_data_from_file("./datasets/svm/test", test_query);
 			/* scale data */
 			test_data.scale_data_from(train_data.scale_data());
 			/* record train data */

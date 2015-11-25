@@ -1,9 +1,8 @@
 package g_lib;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileReader;
-import java.io.FileWriter;
+import util.FileManager;
+
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,9 +15,7 @@ public class Gen_lib {
         with_description,
         without_description
     }
-    private static String original_file = "datasets/original/end";
-    private static String display_file = "datasets/goods_lib";
-    private static String status_file = "datasets/status";
+
 
     private static HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashSet<String>>>>>> code_to_name;
     private static HashMap<String, HashMap<String, HashMap<String, HashMap<String, HashSet<String>>>>> name_to_country;
@@ -26,7 +23,6 @@ public class Gen_lib {
     private static HashMap<String, HashMap<String, HashSet<String>>> brand_to_desc;
     private static HashMap<String, HashSet<String>> desc_to_id;
     private static HashSet<String> id_set;
-    //private static HashMap<String, Integer> desc_to_cnt;
 
     /**
      *
@@ -231,16 +227,6 @@ public class Gen_lib {
                                         buffered_writer.append(", ");
                                     }
                                 }
-                                /*
-                                for (String description : descriptions) {
-                                    id_set = desc_to_id.get(description);
-                                    for (String id : id_set) {
-                                        buffered_writer.append(id);
-                                        buffered_writer.append(", ");
-                                    }
-
-                                }
-                                */
                                 buffered_writer.append(">");
                                 buffered_writer.append("\n");
                                 buffered_writer.flush();
@@ -267,12 +253,6 @@ public class Gen_lib {
                                             buffered_writer.append(", ");
                                         }
                                     }
-                                    /*
-                                    for (String id : id_set) {
-                                        buffered_writer.append(id);
-                                        buffered_writer.append(", ");
-                                    }
-                                    */
                                     buffered_writer.append(">");
                                     buffered_writer.append("\n");
                                     buffered_writer.flush();
@@ -299,16 +279,16 @@ public class Gen_lib {
             case 0:
                 break;
             case 1:
-                original_file = args[0];
+                FileManager.end_file = args[0];
                 break;
             case 2:
-                original_file = args[0];
-                display_file = args[1];
+                FileManager.end_file = args[0];
+                FileManager.lib_display = args[1];
                 break;
             case 3:
-                original_file = args[0];
-                display_file = args[1];
-                status_file = args[2];
+                FileManager.end_file = args[0];
+                FileManager.lib_display = args[1];
+                FileManager.lib_status = args[2];
                 break;
             default:
                 System.err.println("Error: parameters error!");
@@ -320,9 +300,9 @@ public class Gen_lib {
     public static void main(String[] args) {
         check_args(args);
         try {
-            read_from_file(original_file);
-            record_status(status_file);
-            record(display_file, record_type.without_description);
+            read_from_file(FileManager.end_file);
+            record_status(FileManager.lib_status);
+            record(FileManager.lib_display, record_type.without_description);
         } catch (Exception e) {
             e.printStackTrace();
         }

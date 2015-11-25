@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *
  * Created by edwardlol on 15/9/6.
  */
 public class MapTest {

@@ -1,9 +1,6 @@
 package ml;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -115,6 +112,38 @@ public class Data {
 		pstmt.close();
 	}
 
+/*
+	public void read_data_from_file(String file, String query) throws Exception {
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		String line = br.readLine();
+		while (line != null) {
+			String[] content = line.split(" ");
+			// set feature num
+			this.feature_num = content.length - 1;
+			svm_node[] sample = new svm_node[this.feature_num];
+			for (int i = 0; i < this.feature_num; i++) {
+				sample[i] = new svm_node();
+				// set index
+				sample[i].index = i + 1;
+				// set value
+				sample[i].value = stod(rs.getString(i + 2));
+
+				original_set.add(sample);
+				labels.add(mklabel(stod(rs.getString(1))));	// special_flag
+			}
+		}
+
+		// set sample num
+		this.sample_num = original_set.size();
+
+	    // end data preparation
+		System.out.println("Data preparation done! " + this.get_sample_num() + " samples in total");
+		br.close();
+		fr.close();
+	}
+*/
+
 	/**
 	 * record data to file
 	 * @param filename file name to store data
@@ -159,16 +188,11 @@ public class Data {
 		writer.close();
 		fos.close();
 	}
-	
-	
+
 	/**
-	 * scale training data
-	 * @return scaling parameter in double[][]
-	 * @double[0][0]: scale_upper_bound
-	 * @double[0][1]: scale_lower_bound
-	 * @double[i][0]: feature_max[i - 1], 1 <= i <= this.feature_num
-	 * @double[i][1]: feature_min[i - 1], 1 <= i <= this.feature_num
-	 */
+	 * scale_data
+	 * @return scale parameter
+     */
 	public double[][] scale_data () {
 		/* scale labels, not using for now
 		double y_max = -Double.MAX_VALUE;

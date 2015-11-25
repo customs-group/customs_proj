@@ -81,6 +81,6 @@ public class WordsStatistics {
 
     public static void main(String[] args) {
         HashMap<String, Integer> words = read_data();
-        record(words, 10);
+        record(words, 100);
     }
 }

@@ -1,16 +1,13 @@
 package g_lib;
 
-
 import org.ansj.domain.Term;
-import org.ansj.splitWord.analysis.NlpAnalysis;
 import org.ansj.splitWord.analysis.ToAnalysis;
-import org.ansj.util.FilterModifWord;
+import util.FileManager;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,7 +117,32 @@ public class CosineSimilarity {
     }
 
 
+    public static void read_data() {
+        HashMap<String, String[]> map = new HashMap<>();
+        try {
+            FileReader fr = new FileReader("./datasets/");
+            BufferedReader br = new BufferedReader(fr);
+
+            String line = br.readLine();
+            while (line != null) {
+                String[] results = line.split("\t");
+                String id = results[0] + ":::" + results[1];
+                String description = results[5].replaceAll("@@", "");
+
+                List<Term> parseResultList = ToAnalysis.parse(description);
+
+
+                line = br.readLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
+
+        HashMap<String, HashSet<String>> map = FileManager.read_end("./datasets/original/end0873", FileManager.key_column.description);
+
         String aaa = "edwardlol";
         String bbb = "edward";
         System.out.println(getSimilarity(aaa, bbb));
