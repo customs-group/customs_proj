@@ -44,10 +44,6 @@ public class Cluster {
 		}
 	}
 
-	public void add_map(HashMap<String, HashSet<String>> another_brand_to_ids) {
-		another_brand_to_ids.forEach(this::add_brand);
-	}
-
 	/**
 	 * 和另一个Cluster合并
 	 * @param another_cluster 被合并的cluster
@@ -125,5 +121,4 @@ public class Cluster {
 	public Set<String> get_brands() {
 		return this.brand_to_ids.keySet();
 	}
-
 }

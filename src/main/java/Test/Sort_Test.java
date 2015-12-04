@@ -1,6 +1,6 @@
 package Test;
 
-import util.QuickSort;
+import util.Sort;
 
 /**
  * Created by edwardlol on 15/11/19.
@@ -16,9 +16,9 @@ public class Sort_Test {
             System.out.print(Double.toString(_s) + " ");
         }
         System.out.println();
-        QuickSort.set_s(s);
-        QuickSort.quick_sort(0, s.length - 1);
-        s = QuickSort.get_s();
+        Sort.set_s(s);
+        Sort.quick_sort(0, s.length - 1);
+        s = Sort.get_s();
         System.out.print("sorted s: ");
         for (double _s : s) {
             System.out.print(Double.toString(_s) + " ");

@@ -13,7 +13,7 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.RefineryUtilities;
+import org.jfree.data.category.SlidingCategoryDataset;
 import util.EdMath;
 import util.FileManager;
 
@@ -142,7 +142,12 @@ public class Container_Stastics {
         lineandshaperenderer.setSeriesStroke(0, new BasicStroke(3.0F));
         lineandshaperenderer.setSeriesOutlineStroke(0, new BasicStroke(2.0F));
         lineandshaperenderer.setSeriesShape(0, new Ellipse2D.Double(-5.0, -5.0, 10.0, 10.0));
-//        lineandshaperenderer.setItemMargin(0.4); // 设置x轴每个值的间距（不起作用？？）
+
+//        NumberAxis domainAxisX = (NumberAxis)plot.getDomainAxis();//x轴设置
+//        domainAxisX.setTickUnit(new NumberTickUnit(10));//每10个刻度显示一个刻度值
+
+
+//        lineandshaperenderer.setItemMargin(0.8); // 设置x轴每个值的间距（不起作用？？）
 
         // 显示数据值
         DecimalFormat decimalformat1 = new DecimalFormat("##.##");// 数据点显示数据值的格式
@@ -162,9 +167,10 @@ public class Container_Stastics {
         DefaultCategoryDataset defaultcategorydataset = new DefaultCategoryDataset();
         // addValue(Y值，图例名，X值)
         days_map.forEach((days, count) -> {
-            defaultcategorydataset.addValue(count, "First", days);
+                defaultcategorydataset.addValue(count, "First", days);
         });
-        return defaultcategorydataset;
+//        return defaultcategorydataset;
+        return new SlidingCategoryDataset(defaultcategorydataset, 0, days_map.size());
     }
 
     /**
@@ -320,10 +326,11 @@ public class Container_Stastics {
 
         Arrays.sort(days_array);
         make_map();
+
+        /*
         record_days(FileManager.days_static, 0, days_map.size()+1);
 
         disp_top(8);
-
         disp_data(10);
 
         int the_day = get_max_derivate();
@@ -333,7 +340,7 @@ public class Container_Stastics {
 
         record_ids(FileManager.conta_static);
 
-
+*/
         draw("./aaa.png");
     }
 }

@@ -2,24 +2,12 @@ package g_lib;
 
 import util.Dict;
 
-import java.util.Set;
 import java.util.regex.*;
 
 public class Good {
-	private static String brand_filter0;
-	private static String brand_filter1;
-	private static String brand_filter2;
-	private static String brand_filter3;
-	private static String brand_filter4;
-	private static String type_filter0;
-	private static String type_filter1;
-	private static String type_filter2;
-	private static String type_filter3;
-	private static String type_filter4;
+	private static String[] brand_filter;
+	private static String[] type_filter;
 
-//	private static Set<String> brand_pre_dict_2;
-//	private static Set<String> brand_pre_dict_3;
-	
 	private String original_string;
 	private String normalized_string;
 	private String filtered_string;
@@ -35,17 +23,19 @@ public class Good {
 	}
 	
 	static {
-		brand_filter0 = "无品?牌";
-		brand_filter1 = "品牌:+([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 品牌:xxx
-		brand_filter2 = "(^|[^A-Za-z0-9_\u4E00-\u9FA5]+)品牌[^A-Za-z0-9_\u4E00-\u9FA5]*([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 品牌xxx
-		brand_filter3 = "([A-Za-z0-9_\u4E00-\u9FA5]+?)(品?牌)([^A-Za-z0-9_\u4E00-\u9FA5]|$)"; // xxx品牌
-		brand_filter4 = "([A-Za-z0-9_\u4E00-\u9FA5]+)([^品])牌"; // xxx牌blabla
-		
-		type_filter0 = "无型号";
-		type_filter1 = "型号:+([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 型号:xxx
-		type_filter2 = "(^|[^A-Za-z0-9_\u4E00-\u9FA5]+)型号[^A-Za-z0-9_\u4E00-\u9FA5]*([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 型号xxx
-		type_filter3 = "([A-Za-z0-9_\u4E00-\u9FA5]+?)(型?号)([^A-Za-z0-9_\u4E00-\u9FA5]|$)"; // xxx型号
-		type_filter4 = "([A-Za-z0-9_\u4E00-\u9FA5]+)([^型])号"; // xxx型blabla
+		brand_filter = new String[5];
+		brand_filter[0] = "无品?牌"; // 无品牌
+		brand_filter[1] = "品牌:+([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 品牌:xxx
+		brand_filter[2] = "(^|[^A-Za-z0-9_\u4E00-\u9FA5]+)品牌[^A-Za-z0-9_\u4E00-\u9FA5]*([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 品牌xxx
+		brand_filter[3] = "([A-Za-z0-9_\u4E00-\u9FA5]+?)(品?牌)([^A-Za-z0-9_\u4E00-\u9FA5]|$)"; // xxx品牌
+		brand_filter[4] = "([A-Za-z0-9_\u4E00-\u9FA5]+)([^品])牌"; // xxx牌blabla
+
+		type_filter = new String[5];
+		type_filter[0] = "无型号";
+		type_filter[1] = "型号:+([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 型号:xxx
+		type_filter[2] = "(^|[^A-Za-z0-9_\u4E00-\u9FA5]+)型号[^A-Za-z0-9_\u4E00-\u9FA5]*([A-Za-z0-9_\u4E00-\u9FA5]+)"; // 型号xxx
+		type_filter[3] = "([A-Za-z0-9_\u4E00-\u9FA5]+?)(型?号)([^A-Za-z0-9_\u4E00-\u9FA5]|$)"; // xxx型号
+		type_filter[4] = "([A-Za-z0-9_\u4E00-\u9FA5]+)([^型])号"; // xxx型blabla
 	}
 	
 	/**
@@ -53,10 +43,7 @@ public class Good {
 	 */
 	private void normalize_symbol() {
 		this.normalized_string = this.original_string;
-		Set<String> keys = Dict.get_normalizer_map().keySet();
-		for (String key : keys) {
-			this.normalized_string = this.normalized_string.replaceAll(key, Dict.get_normalizer_map().get(key));
-		}
+		Dict.get_normalizer_map().forEach((String key, String value) -> this.normalized_string = this.normalized_string.replaceAll(key, value));
 	}
 	
 	/**
@@ -73,106 +60,65 @@ public class Good {
 	}
 	
 	/**
-	 * 通过g_name设定商品属性
-	 * @param string g_name
-	 */
-	public void set_good_by_gname(String string) {
-		this.original_string = string;
-		this.normalize_symbol();
-		this.filter_words();
-		Pattern brand_pattern0 = Pattern.compile(brand_filter0);
-		Matcher brand_matcher0 = brand_pattern0.matcher(this.filtered_string);
-		Pattern brand_pattern1 = Pattern.compile(brand_filter1);
-		Matcher brand_matcher1 = brand_pattern1.matcher(this.filtered_string);
-		Pattern brand_pattern2 = Pattern.compile(brand_filter2);
-		Matcher brand_matcher2 = brand_pattern2.matcher(this.filtered_string);
-		Pattern brand_pattern3 = Pattern.compile(brand_filter3);
-		Matcher brand_matcher3 = brand_pattern3.matcher(this.filtered_string);
-		Pattern brand_pattern4 = Pattern.compile(brand_filter4);
-		Matcher brand_matcher4 = brand_pattern4.matcher(this.filtered_string);
-		if (this.brand.equals("无")) {
-			if (brand_matcher0.find()) {
-				this.brand = "无";
-			} else if (brand_matcher1.find()) {
-				this.brand = brand_matcher1.group(1);
-			} else if (brand_matcher2.find()) {
-				this.brand = brand_matcher2.group(2);
-			} else if (brand_matcher3.find()) {
-				this.brand = brand_matcher3.group(1);
-			} else if (brand_matcher4.find()) {
-				this.brand = brand_matcher4.group(1) + brand_matcher4.group(2);
-			} else {
-				this.brand = "无";
-			}
-		}
-	}
-	
-	/**
 	 * 通过g_model设定商品属性
 	 * @param string g_model
 	 */
-	public void set_good_by_gmodel(String string) {
+	public void set_good(String string) {
 		this.original_string = string;
 		this.normalize_symbol();
 		this.filter_words();
 		this.discription = this.normalized_string;
-		
-		Pattern brand_pattern0 = Pattern.compile(brand_filter0);
-		Matcher brand_matcher0 = brand_pattern0.matcher(this.filtered_string);
-		Pattern brand_pattern1 = Pattern.compile(brand_filter1);
-		Matcher brand_matcher1 = brand_pattern1.matcher(this.filtered_string);
-		Pattern brand_pattern2 = Pattern.compile(brand_filter2);
-		Matcher brand_matcher2 = brand_pattern2.matcher(this.filtered_string);
-		Pattern brand_pattern3 = Pattern.compile(brand_filter3);
-		Matcher brand_matcher3 = brand_pattern3.matcher(this.filtered_string);
-		Pattern brand_pattern4 = Pattern.compile(brand_filter4);
-		Matcher brand_matcher4 = brand_pattern4.matcher(this.filtered_string);
+
+		Pattern[] brand_pattern = new Pattern[5];
+		Matcher[] brand_matcher = new Matcher[5];
+		for (int i = 0; i < 5; i++) {
+			brand_pattern[i] = Pattern.compile(brand_filter[i]);
+			brand_matcher[i] = brand_pattern[i].matcher(this.filtered_string);
+		}
+
 		if (this.brand.equals("无")) {
-			if (brand_matcher0.find()) {
+			if (brand_matcher[0].find()) {
 				this.brand = "无";
-				this.discription = this.discription.replaceFirst(brand_matcher0.group(), "");
-			} else if (brand_matcher1.find()) {
-				this.brand = brand_matcher1.group(1);
+				this.discription = this.discription.replaceFirst(brand_matcher[0].group(), "");
+			} else if (brand_matcher[1].find()) {
+				this.brand = brand_matcher[1].group(1);
 				this.discription = this.discription.replaceFirst("品牌:" + this.brand, "");
-			} else if (brand_matcher2.find()) {
-				this.brand = brand_matcher2.group(2);
+			} else if (brand_matcher[2].find()) {
+				this.brand = brand_matcher[2].group(2);
 				this.discription = this.discription.replaceFirst("品牌" + this.brand, "");
-			} else if (brand_matcher3.find()) {
-				this.brand = brand_matcher3.group(1);
-				this.discription = this.discription.replaceFirst(this.brand + brand_matcher3.group(2), "");
-			} else if (brand_matcher4.find()) {
-				this.brand = brand_matcher4.group(1) + brand_matcher4.group(2);
+			} else if (brand_matcher[3].find()) {
+				this.brand = brand_matcher[3].group(1);
+				this.discription = this.discription.replaceFirst(this.brand + brand_matcher[3].group(2), "");
+			} else if (brand_matcher[4].find()) {
+				this.brand = brand_matcher[4].group(1) + brand_matcher[4].group(2);
 				this.discription = this.discription.replace(this.brand + "牌", "");
 			} else {
 				this.brand = "无";
 			}
 		}
-		
-		Pattern type_pattern0 = Pattern.compile(type_filter0);
-		Matcher type_matcher0 = type_pattern0.matcher(this.filtered_string);
-		Pattern type_pattern1 = Pattern.compile(type_filter1);
-		Matcher type_matcher1 = type_pattern1.matcher(this.filtered_string);
-		Pattern type_pattern2 = Pattern.compile(type_filter2);
-		Matcher type_matcher2 = type_pattern2.matcher(this.filtered_string);
-		Pattern type_pattern3 = Pattern.compile(type_filter3);
-		Matcher type_matcher3 = type_pattern3.matcher(this.filtered_string);
-		Pattern type_pattern4 = Pattern.compile(type_filter4);
-		Matcher type_matcher4 = type_pattern4.matcher(this.filtered_string);
+
+		Pattern[] type_pattern = new Pattern[5];
+		Matcher[] type_matcher = new Matcher[5];
+		for (int i = 0; i < 5; i++) {
+			type_pattern[i] = Pattern.compile(type_filter[i]);
+			type_matcher[i] = type_pattern[i].matcher(this.filtered_string);
+		}
+
 		if (this.type.equals("无")) {
-			if (type_matcher0.find()) {
+			if (type_matcher[0].find()) {
 				this.type = "无";
-				this.discription = this.discription.replaceFirst(type_matcher0.group(), "");
-			} else if (type_matcher1.find()) {
-				this.type = type_matcher1.group(1);
+				this.discription = this.discription.replaceFirst(type_matcher[0].group(), "");
+			} else if (type_matcher[1].find()) {
+				this.type = type_matcher[1].group(1);
 				this.discription = this.discription.replaceFirst("型号:" + this.type, "");
-			} else if (type_matcher2.find()) {
-				this.type = type_matcher2.group(2);
+			} else if (type_matcher[2].find()) {
+				this.type = type_matcher[2].group(2);
 				this.discription = this.discription.replaceFirst("型号" + this.type, "");
-			} else if (type_matcher3.find()) {
-				this.type = type_matcher3.group(1);
-				this.discription = this.discription.replaceFirst(this.type + type_matcher3.group(2), "");
-			} else if (type_matcher4.find()) {
-				this.type = type_matcher4.group(1) + type_matcher4.group(2);
+			} else if (type_matcher[3].find()) {
+				this.type = type_matcher[3].group(1);
+				this.discription = this.discription.replaceFirst(this.type + type_matcher[3].group(2), "");
+			} else if (type_matcher[4].find()) {
+				this.type = type_matcher[4].group(1) + type_matcher[4].group(2);
 				this.discription = this.discription.replace(this.type + "号", "");
 			} else {
 				this.type = "无";

@@ -4,7 +4,7 @@ package util;
  *
  * Created by edwardlol on 15/11/19.
  */
-public class QuickSort {
+public class Sort {
     private static double[] s;
 
     public static void set_s(double[] _s) {

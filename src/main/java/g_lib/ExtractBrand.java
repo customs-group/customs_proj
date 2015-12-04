@@ -113,8 +113,7 @@ public class ExtractBrand {
 				writer.append("\n");
 
 				Good good = new Good();
-				good.set_good_by_gname(g_name);
-				good.set_good_by_gmodel(g_model);
+				good.set_good(g_name + g_model);
 
 				writer.append("品牌: ");
 				writer.append(good.get_brand());

@@ -71,6 +71,8 @@ public class FileManager {
                 map.put(key, id_set);
                 line = br.readLine();
             }
+            br.close();
+            fr.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -100,6 +102,8 @@ public class FileManager {
                 }
                 line = br.readLine();
             }
+            br.close();
+            fr.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
