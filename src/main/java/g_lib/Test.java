@@ -50,7 +50,7 @@ public class Test {
     public static void record() {
         hs_to_attrs.forEach((String hs_code, HashSet<String> attr_set) -> {
             try {
-                FileWriter fw = new FileWriter("datasets/g_lib/" + hs_code);
+                FileWriter fw = new FileWriter("datasets/attrs/" + hs_code);
                 BufferedWriter bw = new BufferedWriter(fw);
                 attr_set.forEach(attr -> {
                     try {

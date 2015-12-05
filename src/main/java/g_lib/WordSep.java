@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  * Created by edwardlol on 15/12/3.
  */
 public class WordSep {
+
     public static void do_sep(String source_file, String target_file) {
         String symbol_re = "[`~!@#\\$%\\^&\\*\\(\\)\\-_=\\+[{]}\\|;:'\",<\\.>/\\?\\s]+";
         Pattern all_symbol = Pattern.compile("^" + symbol_re + "$");
@@ -37,12 +38,12 @@ public class WordSep {
                 }
 
                 bw.append(content[0]);
-                bw.append(":::");
+                bw.append(":");
                 bw.append(content[1]);
-                bw.append("\t");
+                bw.append("!?");
 
                 bw.append(content[5]);
-                bw.append("\t");
+                bw.append("!?");
 
                 List<Term> parseResultList = NlpAnalysis.parse(content[5]);
                 Iterator it = parseResultList.iterator();

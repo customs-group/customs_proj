@@ -9,38 +9,50 @@ public class Cluster {
 	public enum record_type {with_id, without_id}
 	private Boolean flag;
 	private String label;
-	private HashMap<String, HashSet<String>> brand_to_ids;
+	private HashMap<String, HashSet<String>> k_ids;
 
 	/**
 	 * 初始化cluster
-	 * @param brand 读取的品牌
-	 * @param id_set 该品牌下的id_set
+	 * @param key 初始化时一个类只有一个key
+	 * @param id_set 该key下的id_set
 	 */
-	public Cluster(String brand, HashSet<String> id_set) {
-		this.brand_to_ids = new HashMap<>();
-		this.brand_to_ids.put(brand, id_set);
+	public Cluster(String key, HashSet<String> id_set) {
+		this.k_ids = new HashMap<>();
+		this.k_ids.put(key, id_set);
 		this.auto_set_label();
 		this.flag = false;
 	}
 
 	/**
 	 * 通过map初始化cluster
-	 * @param _brand_to_ids 创建好的brand map
+	 * @param _k_ids 创建好的[key:id_set]
 	 */
-	public Cluster(HashMap<String, HashSet<String>> _brand_to_ids) {
-		this.brand_to_ids = _brand_to_ids;
+	public Cluster(HashMap<String, HashSet<String>> _k_ids) {
+		this.k_ids = _k_ids;
 	}
 
 	/**
-	 * 向cluster下添加品牌
-	 * @param brand 需添加的品牌
+	 * 向cluster下添加key
+	 * @param key 需添加的品牌
 	 * @param id_set 该品牌下的id_set
 	 */
-	public void add_brand(String brand, HashSet<String> id_set) {
-		if (this.brand_to_ids.containsKey(brand)) {
-			this.brand_to_ids.get(brand).addAll(id_set);
+	public void add_key(String key, HashSet<String> id_set) {
+		if (this.k_ids.containsKey(key)) {
+			this.k_ids.get(key).addAll(id_set);
 		} else {
-			this.brand_to_ids.put(brand, id_set);
+			this.k_ids.put(key, id_set);
+		}
+	}
+
+	/**
+	 * 从cluster中删除key
+	 * @param key 被删除的key
+     */
+	public void remove_key(String key) {
+		if (this.k_ids.containsKey(key)) {
+			this.k_ids.remove(key);
+		} else {
+			System.out.println("no key: " + key);
 		}
 	}
 
@@ -49,7 +61,7 @@ public class Cluster {
 	 * @param another_cluster 被合并的cluster
 	 */
 	public void union(Cluster another_cluster) {
-		another_cluster.brand_to_ids.forEach(this::add_brand);
+		another_cluster.k_ids.forEach(this::add_key);
 	}
 
 	/**
@@ -61,17 +73,17 @@ public class Cluster {
 		result.append(this.label);
 		result.append("; ");
 
-		Iterator<Map.Entry<String, HashSet<String>>> brand_iter = this.brand_to_ids.entrySet().iterator();
-		while (brand_iter.hasNext()) {
-			Map.Entry<String, HashSet<String>> brand_entry = brand_iter.next();
+		Iterator<Map.Entry<String, HashSet<String>>> iterator = this.k_ids.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry<String, HashSet<String>> entry = iterator.next();
 			result.append("<");
-			result.append(brand_entry.getKey());
+			result.append(entry.getKey());
 			if (type == record_type.with_id) {
 				result.append(": ");
-				result.append(brand_entry.getValue().toString());
+				result.append(entry.getValue().toString());
 			}
 			result.append(">");
-			if (brand_iter.hasNext()) {
+			if (iterator.hasNext()) {
 				result.append(", ");
 			}
 		}
@@ -80,19 +92,19 @@ public class Cluster {
 	}
 
 	/**
-	 * 根据出现次数最多的brand自动设置推荐label
+	 * 根据出现次数最多的key自动设置label
 	 */
 	public void auto_set_label() {
-		String max_brand = "";
+		String max_key = "";
 		int max_count = 0;
-		for (Map.Entry<String, HashSet<String>> brand_entry : this.brand_to_ids.entrySet()) {
-			int count = brand_entry.getValue().size();
+		for (Map.Entry<String, HashSet<String>> entry : this.k_ids.entrySet()) {
+			int count = entry.getValue().size();
 			if (count > max_count) {
-				max_brand = brand_entry.getKey();
+				max_key = entry.getKey();
 				max_count = count;
 			}
 		}
-		this.label = max_brand;
+		this.label = max_key;
 	}
 	
 	/** get/set methods */
@@ -108,17 +120,17 @@ public class Cluster {
 	public Boolean get_flag() {
 		return this.flag;
 	}
-	public Integer get_total_count() {
-		Integer result = 0;
-		for (Map.Entry<String, HashSet<String>> brand_entry : brand_to_ids.entrySet()) {
-			result += brand_entry.getValue().size();
+	public int get_total_count() {
+		int result = 0;
+		for (Map.Entry<String, HashSet<String>> entry : this.k_ids.entrySet()) {
+			result += entry.getValue().size();
 		}
 		return result;
 	}
-	public HashMap<String, HashSet<String>> get_brand_to_ids() {
-		return this.brand_to_ids;
+	public HashMap<String, HashSet<String>> get_k_ids() {
+		return this.k_ids;
 	}
-	public Set<String> get_brands() {
-		return this.brand_to_ids.keySet();
+	public Set<String> get_keys() {
+		return this.k_ids.keySet();
 	}
 }

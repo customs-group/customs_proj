@@ -40,7 +40,7 @@ public class HierarchicalCluster {
 		LevensteinDistance ld = new LevensteinDistance();
 		ArrayList<String> brand_list = new ArrayList<>();
 		cluster_list.forEach(cluster -> {
-			List<String> brands = new ArrayList<>(cluster.get_brand_to_ids().keySet());
+			List<String> brands = new ArrayList<>(cluster.get_k_ids().keySet());
 			brands.forEach(brand_list::add);
 		});
 

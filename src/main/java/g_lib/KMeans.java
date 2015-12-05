@@ -47,7 +47,7 @@ public class KMeans {
         }
         for (int i = 0; i < cluster_list.size(); i++) {
             System.out.print("center " + i + ": ");
-            for (String aaa : cluster_list.get(i).get_brands()) {
+            for (String aaa : cluster_list.get(i).get_keys()) {
                 System.out.print(aaa);
                 if (i < cluster_list.size()) {
                     System.out.print(", ");
@@ -112,12 +112,12 @@ public class KMeans {
                 float dist = 0;
                 System.out.println("center" + i);
                 Cluster center = cluster_list.get(i);
-                for (String brand : center.get_brands()) {
+                for (String brand : center.get_keys()) {
                     float _dist = ld.getDistance(cluster.get_label(), brand);
                     dist += _dist;
                     System.out.println("center brand: " + brand + "; dist: " + _dist);
                 }
-                dist /= center.get_brands().size();
+                dist /= center.get_keys().size();
                 System.out.println("center dist: " + dist);
                 if (dist > temp) {
                     temp = dist;
@@ -130,7 +130,7 @@ public class KMeans {
             for (int i = 0; i < cluster_list.size(); i++) {
                 Cluster center = cluster_list.get(i);
                 System.out.print("center " + i + ": ");
-                for (String brand : center.get_brands()) {
+                for (String brand : center.get_keys()) {
                     System.out.print(brand + " ");
                 }
                 System.out.println();
