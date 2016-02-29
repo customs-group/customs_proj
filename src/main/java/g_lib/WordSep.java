@@ -29,23 +29,23 @@ public class WordSep {
 
             String line = br.readLine();
             while (line != null) {
-                String[] content = line.split("\t");
-                if (content.length != 6) {
-                    System.out.println("end file format error");
-                    System.out.println(line);
+                String[] contents = line.split("\t");
+                if (contents.length != 6) {
+                    System.out.println("end file format error!");
+                    System.out.println("error line: " + line);
                     line = br.readLine();
                     continue;
                 }
 
-                bw.append(content[0]);
+                bw.append(contents[0]);
                 bw.append(":");
-                bw.append(content[1]);
+                bw.append(contents[1]);
                 bw.append("!?");
 
-                bw.append(content[5]);
+                bw.append(contents[5]);
                 bw.append("!?");
 
-                List<Term> parseResultList = NlpAnalysis.parse(content[5]);
+                List<Term> parseResultList = NlpAnalysis.parse(contents[5]);
                 Iterator it = parseResultList.iterator();
                 while (it.hasNext()) {
                     Term term = (Term) it.next();

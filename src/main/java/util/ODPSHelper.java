@@ -27,7 +27,7 @@ public class ODPSHelper {
     public String executeNonQuery(String sql) {
         String r = "";
         try {
-            Instance instance = SQLTask.run(odps,sql);
+            Instance instance = SQLTask.run(odps, sql);
             String id = instance.getId();
             instance.waitForSuccess();
         } catch (Exception e) {
