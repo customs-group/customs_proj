@@ -14,7 +14,7 @@ import java.util.HashSet;
 public class FileManager {
 
     public static String end_file = "datasets/original/end";
-    public static String conta_file = "datasets/original/thm_conta_ei";
+//    public static String conta_file = "datasets/original/thm_conta_ei";
 
     public static String hir_cluster_result = "datasets/clusters";
     public static String km_cluster_result = "datasets/kmclusters";
@@ -36,9 +36,9 @@ public class FileManager {
     public static HashMap<String, HashSet<String>> read_end(String end_file, key_column column) {
         HashMap<String, HashSet<String>> map = new HashMap<>();
         HashSet<String> id_set;
-        try {
-            FileReader fr = new FileReader(end_file);
-            BufferedReader br = new BufferedReader(fr);
+        try(FileReader fr = new FileReader(end_file);
+            BufferedReader br = new BufferedReader(fr)) {
+
             String line = br.readLine();
             while (line != null) {
                 String[] attrs = line.split("\t");
@@ -71,47 +71,10 @@ public class FileManager {
                 map.put(key, id_set);
                 line = br.readLine();
             }
-            br.close();
-            fr.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return map;
     }
 
-    /**
-     * read data from "datasets/original/thm_conta_ei"
-     * @param conta_file file name
-     * @return days array
-     */
-    public static int[] read_thm(String conta_file) {
-        ArrayList<Integer> days_list = new ArrayList<>();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            FileReader fr = new FileReader(conta_file);
-            BufferedReader br = new BufferedReader(fr);
-            String line = br.readLine();
-            while (line != null) {
-                String[] attrs = line.split("@@");
-                if (attrs.length != 24) {
-                    break;
-                }
-                if (sdf.parse(attrs[3]).getTime() - sdf.parse(attrs[4]).getTime() <= 0) {
-                    int days = Integer.parseInt(attrs[5]);
-                    days_list.add(days);
-                }
-                line = br.readLine();
-            }
-            br.close();
-            fr.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        int[] days_array = new int[days_list.size()];
-        for (int i = 0; i < days_list.size(); i++) {
-            days_array[i] = days_list.get(i);
-        }
-        return days_array;
-    }
 }

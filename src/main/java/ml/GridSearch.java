@@ -12,7 +12,7 @@ import libsvm.svm_parameter;
 import libsvm.svm_print_interface;
 import libsvm.svm_problem;
 
-public class Grid_search {
+public class GridSearch {
 	private static int C_BASE = 2;
 	private static int G_BASE = 2;
 	private static int C_STEP = 1;
@@ -85,9 +85,9 @@ public class Grid_search {
 	 * @param param
 	 * @return best accuracy under this set of c and g
 	 */
-	private static double do_cross_validation(Data data, int power_of_c, int power_of_g, int fold_n, svm_parameter param) {
-		Vector<svm_node[]> set = data.get_set(Data.data_type.scaled);
-		Vector<Double> labels = data.get_labels();
+	private static double do_cross_validation(SVMData data, int power_of_c, int power_of_g, int fold_n, svm_parameter param) {
+		Vector<svm_node[]> set = data.getData(SVMData.data_type.scaled);
+		Vector<Double> labels = data.getLabels();
 		svm_model model;
 		int total_hit = 0;
 		int vs_start, vs_end, vs_len; // validate_segment
@@ -125,16 +125,14 @@ public class Grid_search {
 		return predict_accuracy;
 	}
 	
-	private static svm_print_interface svm_print_null = new svm_print_interface() {
-		public void print(String s) {}
-	};
+	private static svm_print_interface svm_print_null = s -> {};
 	
 	/**
 	 * search the best svm parameter
 	 * @param data training data
 	 * @return svm_parameter
 	 */
-	public static svm_parameter update_param(Data data) {
+	public static svm_parameter update_param(SVMData data) {
 		// no training outputs
 		svm_print_interface print_func = svm_print_null;
 		svm.svm_set_print_string_function(print_func);
@@ -180,54 +178,5 @@ public class Grid_search {
 		System.out.println("best C: " + param.C + "; best gamma: " + param.gamma + "; accuracy: " + best_hit_rate);
 		return param;
 	}
-	
-	public static void main(String[] args) {
-		/* query: get sets from database
-		 * colom 1: labels
-		 * colom 2 - N: features
-		 */
-		String train_query;
-		String limit = "limit 2500";
-		
-		Vector<String> features = new Vector<>();
-		features.add("entry_head.special_flag");
-		features.add("entry_head.i_e_flag");
-		//features.add("entry_head.decl_port");
-		//features.add("entry_head.trade_country");
-		//features.add("entry_head.destination_port");
-		features.add("UNIX_TIMESTAMP(entry_head.d_date)");
-		features.add("entry_head.trade_mode");
-		features.add("entry_list.code_ts");
-		features.add("entry_list.qty_1");
-		features.add("entry_list.usd_price");
-		
-		/* train query */
-		train_query = "select";
-		for (int i = 0; i < features.size() - 1; i++) {
-			train_query +=  " " + features.get(i) + ",";
-		}
-		train_query += " " + features.get(features.size() - 1);
-		
-		train_query += " from entry_head inner join entry_list on entry_head.entry_id = entry_list.entry_id";
-		train_query += " where entry_head.d_date < '2010-03-05' and entry_head.special_flag = 1 " + limit;
-		train_query += " union (select";
-		for (int i = 0; i < features.size() - 1; i++) {
-			train_query +=  " " + features.get(i) + ",";
-		}
-		train_query += " " + features.get(features.size() - 1);
-		train_query += " from entry_head inner join entry_list on entry_head.entry_id = entry_list.entry_id";
-		train_query += " where entry_head.d_date < '2010-03-05' and entry_head.special_flag = 0 " + limit + ");";
 
-		Connection connection = DB_manager.get_DB_connection();
-		
-		Data data = new Data();
-		try {
-			data.read_data(connection, train_query);
-			data.scale_data();
-			update_param(data);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		DB_manager.return_DB_connection(connection);
-	}
 }

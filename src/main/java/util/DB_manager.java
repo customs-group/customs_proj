@@ -17,9 +17,9 @@ public class DB_manager {
 	public static Connection get_DB_connection() {
 		Connection connection = null;
 		// read config file
-		try {
-			FileReader file_reader = new FileReader(config_file);
-	    	BufferedReader buffered_reader = new BufferedReader(file_reader);
+		try(FileReader file_reader = new FileReader(config_file);
+			BufferedReader buffered_reader = new BufferedReader(file_reader)) {
+
 	    	String config = buffered_reader.readLine();
 	        while (config != null) {
 	        	String[] result = config.split(": ");
@@ -38,8 +38,6 @@ public class DB_manager {
 				}
 	        	config = buffered_reader.readLine();
 	        }
-	        buffered_reader.close();
-	        file_reader.close();
 		} catch (Exception e) {
 			System.out.println("read config file failed!");
 			e.printStackTrace();

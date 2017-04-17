@@ -4,6 +4,7 @@ package util;
  *
  * Created by edwardlol on 15/11/24.
  */
+// TODO: 17-4-17 simplify this stupid class
 public class EdMath {
 
     /**
@@ -11,7 +12,7 @@ public class EdMath {
      * @param data source data
      * @return mean of data
      */
-    public static double calculate_mean(double[] data) {
+    public static double mean(double[] data) {
         double sum = 0.0;
         for (int i = 1; i < data.length; i++) {
             sum += data[i];
@@ -24,7 +25,7 @@ public class EdMath {
      * @param data source data
      * @return mean of data
      */
-    public static double calculate_mean(int[] data) {
+    public static double mean(int[] data) {
         double sum = 0.0;
         for (int i = 1; i < data.length; i++) {
             sum += data[i];
@@ -37,8 +38,8 @@ public class EdMath {
      * @param data source data
      * @return standard deviation of data
      */
-    public static double calculate_sd(double[] data) {
-        double mean = calculate_mean(data);
+    public static double standardDeviation(double[] data) {
+        double mean = mean(data);
         double deviation = 0.0;
         for (double _data : data) {
             deviation += (mean - _data) * (mean - _data);
@@ -51,8 +52,8 @@ public class EdMath {
      * @param data source data
      * @return standard deviation of data
      */
-    public static double calculate_sd(int[] data) {
-        double mean = calculate_mean(data);
+    public static double standardDeviation(int[] data) {
+        double mean = mean(data);
         double deviation = 0.0;
         for (double _data : data) {
             deviation += (mean - _data) * (mean - _data);

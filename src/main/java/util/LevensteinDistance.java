@@ -1,15 +1,21 @@
 package util;
 
+/**
+ * Compute Levenshtein distance:
+ * see org.apache.commons.lang.StringUtils#getLevenshteinDistance(String, String)
+ */
 public final class LevensteinDistance {
-// Compute Levenshtein distance:   
-// see org.apache.commons.lang.StringUtils#getLevenshteinDistance(String, String)
 
     public float getDistance (String string1, String string2) {
         char[] s1_array = string1.toCharArray();
         final int s1_len = string1.length();
         final int s2_len = string2.length();
-        int p[] = new int[s1_len + 1]; // 'previous' cost array, horizontally
-        int d[] = new int[s1_len + 1]; // cost array, horizontally
+
+        // 'previous' cost array, horizontally
+        int p[] = new int[s1_len + 1];
+
+        // cost array, horizontally
+        int d[] = new int[s1_len + 1];
 
         int s1_added = 0, s2_added = 0;
 
@@ -54,7 +60,7 @@ public final class LevensteinDistance {
 //        return 1.0f - ((float) p[s1_len] / Math.max(s2_len, s1_len));
 
         /// output
-        double temp = 0;
+        double temp;
         if (s1_added == 0) {
             temp = s2_added;
         } else if (s2_added == 0) {
@@ -63,7 +69,8 @@ public final class LevensteinDistance {
             temp = Math.min(s1_added, s2_added);
         }
         double result = p[s1_len] - temp * 0.5;
-        System.out.println("s1_added = " + s1_added + "; s2_added = " + s2_added + "; aaa = " + result);
+        // debug info
+        System.out.println("s1_added = " + s1_added + "; s2_added = " + s2_added + "; result = " + result);
         return 1.0f - ((float) result / Math.max(s2_len, s1_len));
     }
 }

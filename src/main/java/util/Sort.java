@@ -14,7 +14,7 @@ public class Sort {
         return s;
     }
 
-    //快速排序
+    // 快排
     public static void quick_sort(int left, int right) {
         if (left < right) {
             int i = left, j = right;

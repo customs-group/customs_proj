@@ -127,7 +127,7 @@ public class ExtractBrand {
 				writer.append(good.get_discription());
 				writer.append("\n");
 			}
-			System.out.println("Data record done! see \"" + filename + "\"");
+			System.out.println("SVMData record done! see \"" + filename + "\"");
 			// end data preparation
 			writer.close();
 			fos.close();
